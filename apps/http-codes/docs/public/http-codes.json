@@ -1,0 +1,767 @@
+[
+  {
+    "code": 100,
+    "name": "Continue",
+    "meaning": "This interim response indicates that the client should continue the request or ignore the response if the request is already finished.",
+    "whenToUse": "When the server has received the request headers and the client should proceed to send the request body.",
+    "example": "Client sends a large POST request with Expect: 100-continue, server responds with 100 Continue to proceed.",
+    "whenNotToUse": "Do not use if the request is already complete or if no request body needs to be sent.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 101,
+    "name": "Switching Protocols",
+    "meaning": "The server is switching protocols as requested by the client via the Upgrade header.",
+    "whenToUse": "When agreeing to switch to a different protocol (e.g., switching to WebSocket after an Upgrade request).",
+    "example": "Client requests upgrade to WebSocket with HTTP, server responds with 101 to confirm protocol switch.",
+    "whenNotToUse": "Do not use if no protocol change is being performed.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 102,
+    "name": "Processing",
+    "meaning": "Indicates that the server has received and is processing the request, but no response is available yet.",
+    "whenToUse": "When a request (such as a WebDAV request) involves complex operations and will take long to complete.",
+    "example": "A WebDAV PROPPATCH request triggers a 102 Processing to prevent the client from timing out while the server works.",
+    "whenNotToUse": "Do not use for quick operations; only for lengthy requests. Note: This status code is deprecated and not used in HTTP/1.1 clients.",
+    "source": "RFC 2518 (WebDAV)"
+  },
+  {
+    "code": 103,
+    "name": "Early Hints",
+    "meaning": "Used to return some response headers before the final HTTP response is sent.",
+    "whenToUse": "When the server wants to hint to the client (often a browser) about resources it can preload while the final response is being prepared.",
+    "example": "Server sends 103 Early Hints with Link headers (preload hints) before sending a final 200 OK response.",
+    "whenNotToUse": "Do not use if there are no preliminary headers to send or if not using link preload strategies.",
+    "source": "RFC 8297"
+  },
+  {
+    "code": 200,
+    "name": "OK",
+    "meaning": "Standard response for successful HTTP requests; the meaning varies with the request method.",
+    "whenToUse": "For successful GET, POST, PUT, etc., when the request has been processed and the result is included in the response.",
+    "example": "GET /api/items returns 200 OK along with the list of items in the response body.",
+    "whenNotToUse": "Do not use for errors, redirects, or when a more specific success code (201, 204, etc.) is applicable.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 201,
+    "name": "Created",
+    "meaning": "The request was successful and led to the creation of a new resource.",
+    "whenToUse": "When a new resource has been created as the result of a POST or some PUT requests.",
+    "example": "POST /api/users with a new user returns 201 Created and typically includes a Location header pointing to the new user.",
+    "whenNotToUse": "Do not use if no new resource is actually created (use 200 or other appropriate code instead).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 202,
+    "name": "Accepted",
+    "meaning": "The request has been received but not yet acted upon; processing will happen asynchronously.",
+    "whenToUse": "When the server accepts a request for processing, but the processing is not completed when the response is sent (e.g., long-running job, batch processing).",
+    "example": "Submitting a background job returns 202 Accepted to indicate the request was received and will be processed later.",
+    "whenNotToUse": "Do not use if the server has already completed the action and can provide a synchronous response.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 203,
+    "name": "Non-Authoritative Information",
+    "meaning": "The request was successful but the enclosed payload has been modified from that of the origin server's 200 OK response by a transforming proxy.",
+    "whenToUse": "When a proxy or intermediary modifies the origin's response (e.g., removing or changing headers or content) before relaying it to the client.",
+    "example": "A caching proxy returns 203 Non-Authoritative Information to indicate it is returning a cached copy that has been modified from the original.",
+    "whenNotToUse": "Do not use if the response is identical to the origin's content (in that case use 200) or if no transformation was applied.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 204,
+    "name": "No Content",
+    "meaning": "The server successfully processed the request and is not returning any content in the body.",
+    "whenToUse": "When a request is successful but there is no need to return a body (commonly after executing a DELETE or when updating a resource without returning data).",
+    "example": "DELETE /api/items/123 returns 204 No Content on successful deletion with no response body.",
+    "whenNotToUse": "Do not use if there is content to send in the response. Any content in a 204 response will be ignored by the client.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 205,
+    "name": "Reset Content",
+    "meaning": "The server successfully processed the request, and is not returning content, but it expects the client to reset the document view that sent the request.",
+    "whenToUse": "When you want the client to clear form input or reset the UI after a successful action, without returning content.",
+    "example": "After a form submission that clears data, the server returns 205 Reset Content to instruct the client to reset the form view.",
+    "whenNotToUse": "Do not use if the client should not reset its view or if you need to return content (use 204 for no content without requiring a reset).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 206,
+    "name": "Partial Content",
+    "meaning": "The server is delivering only part of the resource due to a range header sent by the client.",
+    "whenToUse": "When fulfilling a request with a Range header, returning the specified portion of the resource (used for resumable downloads or splitting downloads).",
+    "example": "GET /file.zip with a Range header returns 206 Partial Content with the requested byte range of the file and a Content-Range header.",
+    "whenNotToUse": "Do not use if no range was requested or if the full content is being delivered (use 200 for the entire content).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 207,
+    "name": "Multi-Status",
+    "meaning": "The message body contains an XML document with multiple separate response codes, typically for batch or multi-part operations (WebDAV).",
+    "whenToUse": "When a WebDAV request (like PROPFIND or a batch operation) needs to return status for multiple independent sub-requests in a single response.",
+    "example": "A WebDAV PROPFIND returns 207 Multi-Status with an XML body containing status codes for each file operation in the request.",
+    "whenNotToUse": "Do not use for single-resource requests. This is specific to situations where multiple outcomes need to be reported together.",
+    "source": "RFC 4918 (WebDAV)"
+  },
+  {
+    "code": 208,
+    "name": "Already Reported",
+    "meaning": "The members of a WebDAV binding have already been enumerated in a previous part of the response, and are not being included again.",
+    "whenToUse": "When a WebDAV request has multiple operations on the same resource (like a DAV binding), and you have already reported its status in a 207 Multi-Status response to avoid duplication.",
+    "example": "A DAV PROPFIND on a collection returns 207, and if a member was already reported, subsequent multi-status parts might use 208 Already Reported for that member.",
+    "whenNotToUse": "Do not use outside of WebDAV multi-status responses. If each resource’s status is unique, report them individually instead of using 208.",
+    "source": "RFC 5842 (WebDAV)"
+  },
+  {
+    "code": 226,
+    "name": "IM Used",
+    "meaning": "The server has fulfilled a GET request for the resource, and the response is a representation of the result of one or more instance-manipulations (Delta encoding) applied to the current instance.",
+    "whenToUse": "When a server has applied a delta encoding to a representation and is returning the result (indicating that the response is not a full new resource but a manipulated instance).",
+    "example": "A server returns 226 IM Used in response to a GET that included an \"A-IM\" header (Acceptable Instance-Manipulations) to indicate it applied a delta update to the content.",
+    "whenNotToUse": "Do not use if no instance-manipulation was applied; use 200 OK or another appropriate status for normal responses.",
+    "source": "RFC 3229"
+  },
+  {
+    "code": 300,
+    "name": "Multiple Choices",
+    "meaning": "Indicates multiple options for the resource from which the client may choose (different format options or disambiguation).",
+    "whenToUse": "When there are multiple representations for a resource and the server cannot automatically choose one, requiring the user or agent to select (content negotiation results in multiple available formats).",
+    "example": "Accessing a resource that has different format variants (like /document with HTML and PDF versions) could return 300 Multiple Choices with a list of links to all versions.",
+    "whenNotToUse": "Do not use if there is a preferred or single representation that can be served directly (in such cases use a direct 200 or a redirect to the best choice).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 301,
+    "name": "Moved Permanently",
+    "meaning": "The requested resource has been assigned a new permanent URI, and any future references to this resource should use one of the returned URIs.",
+    "whenToUse": "When a resource has been permanently moved to a new URL and the client should use the new URL for all future requests.",
+    "example": "A GET request to an old endpoint returns 301 Moved Permanently with a Location header pointing to the resource's new permanent URL.",
+    "whenNotToUse": "Do not use for temporary relocations (use 302 or 307 instead) or when the move is not permanent.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 302,
+    "name": "Found",
+    "meaning": "The requested resource resides temporarily under a different URI. The client should use the URI from the response for this request, but future requests can still use the original URI.",
+    "whenToUse": "When redirecting to a different URI temporarily (for example, during maintenance or as part of a temporary redirect logic).",
+    "example": "A web page temporarily moved to a maintenance page returns 302 Found with a Location header to the temporary page, while the original URL remains the same for future requests.",
+    "whenNotToUse": "Do not use for permanent redirection (use 301 or 308) or when the resource actually has multiple representations (not a redirect scenario).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 303,
+    "name": "See Other",
+    "meaning": "The response to the request can be found at another URI using the GET method. This is used to direct the client to retrieve a resource at a different URI, often after a POST.",
+    "whenToUse": "When a resource has been created or a command processed via POST/PUT/DELETE, and you want the client to retrieve a confirmation or result from a different URI with a GET.",
+    "example": "After submitting a form (POST /submit-form), the server responds with 303 See Other and a Location header to /result-page, instructing the client to GET that URL for the results.",
+    "whenNotToUse": "Do not use for GET requests (since the client can directly retrieve content) or for permanent redirect needs (use 301/308 for those). 303 is typically for redirecting after non-GET methods.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 304,
+    "name": "Not Modified",
+    "meaning": "Indicates that the resource has not been modified since the version specified by the client's conditional request headers (e.g., If-Modified-Since or If-None-Match).",
+    "whenToUse": "When the client has made a conditional GET request and the resource has not changed, so the server returns no body to save bandwidth.",
+    "example": "Client requests an image with If-None-Match header; if the image is unchanged, server responds with 304 Not Modified and no body, so the client can use its cached copy.",
+    "whenNotToUse": "Do not use if the resource has changed (instead return the new resource with 200) or if no conditional headers were provided (just return the resource normally).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 305,
+    "name": "Use Proxy",
+    "meaning": "The requested resource is available only through a proxy, whose address is provided in the response. Many clients (browsers) do not support this response for security reasons.",
+    "whenToUse": "In older HTTP/1.1 usage, when a server wanted to indicate that the client must use a proxy to access the requested resource.",
+    "example": "A server returns 305 Use Proxy with a Location or Proxy-redirect header that instructs the client to use a specific proxy server for this resource.",
+    "whenNotToUse": "Do not use in modern applications. Most user-agents ignore 305 for security reasons, and it is deprecated in HTTP/1.1.",
+    "source": "RFC 2616 (deprecated)"
+  },
+  {
+    "code": 306,
+    "name": "Switch Proxy",
+    "meaning": "This code is no longer used. It was once proposed to indicate that subsequent requests should use a specified proxy, but it was never implemented.",
+    "whenToUse": "Never; this status code is reserved and not used in modern HTTP. It remains only as a placeholder for historical reasons.",
+    "example": "N/A (306 is not used in practice, so no example of a real HTTP exchange).",
+    "whenNotToUse": "Do not use this code at all. It is reserved and has no effect in HTTP/1.1 clients or servers.",
+    "source": "RFC 2616 (reserved, unused)"
+  },
+  {
+    "code": 307,
+    "name": "Temporary Redirect",
+    "meaning": "The request should be repeated with another URI, but future requests should still use the original URI. Unlike 302, the HTTP method is not changed when reissuing the original request.",
+    "whenToUse": "When temporarily redirecting to a different URL and you want to preserve the request method on redirect (HTTP/1.1 behavior).",
+    "example": "A POST to an endpoint returns 307 Temporary Redirect with Location pointing to a maintenance page; the client will repeat the POST to that maintenance URL, then continue to use the original URL later.",
+    "whenNotToUse": "Do not use for permanent changes (use 308 Permanent Redirect or 301) or if you intend to allow changing the method (use 302/303 in those cases).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 308,
+    "name": "Permanent Redirect",
+    "meaning": "The resource has been moved to a new URL permanently, and future requests should use the new URI. Like 301, but it does not allow changing the HTTP method.",
+    "whenToUse": "When permanently redirecting a resource to a new URL while instructing clients to use the same HTTP method for subsequent requests (no method change, ensuring POST remains POST, etc.).",
+    "example": "An API endpoint's path is changed; the old endpoint responds with 308 Permanent Redirect and a Location header to the new URL. Clients will use the new URL going forward with the same HTTP verbs.",
+    "whenNotToUse": "Do not use if the redirect is temporary (use 302 or 307) or if allowing the HTTP method to change is acceptable (301 might be used, though 301 is often misused by clients to change to GET).",
+    "source": "RFC 7538"
+  },
+  {
+    "code": 400,
+    "name": "Bad Request",
+    "meaning": "The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).",
+    "whenToUse": "When the request is not understood by the server due to bad syntax or is inherently impossible to satisfy.",
+    "example": "Sending an API request with malformed JSON or missing required fields results in a 400 Bad Request response indicating the client error.",
+    "whenNotToUse": "Do not use for server-side errors (those should be 5xx codes) or for authentication failures (use 401) or authorization issues (use 403).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 401,
+    "name": "Unauthorized",
+    "meaning": "The request has not been applied because it lacks valid authentication credentials for the target resource.",
+    "whenToUse": "When authentication is required and has either failed or not been provided. The response must include a WWW-Authenticate header field with a challenge for the client.",
+    "example": "Accessing a protected endpoint without a valid token returns 401 Unauthorized, prompting the client to provide credentials (WWW-Authenticate header might indicate the required scheme).",
+    "whenNotToUse": "Do not use if the client is authenticated but not allowed to access the resource (use 403 Forbidden in that case).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 402,
+    "name": "Payment Required",
+    "meaning": "Reserved for future use. Intended for cases where payment is required for access, but no standard use currently exists.",
+    "whenToUse": "Rarely used in practice. Could be used in experimental or proprietary APIs to indicate the client needs to pay (or has exceeded a quota) before the request can be fulfilled.",
+    "example": "Some APIs might return 402 Payment Required if a user has exceeded a usage quota or needs to upgrade their plan (though 402 is not widely adopted).",
+    "whenNotToUse": "Do not use for general unsuccessful requests. Since there's no official standard implementation for 402, it's usually avoided or repurposed in limited cases.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 403,
+    "name": "Forbidden",
+    "meaning": "The server understood the request but refuses to authorize it. The client is not allowed to access this resource, even if authenticated.",
+    "whenToUse": "When the client is authenticated but does not have permission to access the resource, or the server does not want to reveal the resource exists. It indicates that the request is valid, but the server is refusing action.",
+    "example": "A user without admin rights tries to access an admin-only API endpoint and receives 403 Forbidden, indicating they are recognized but not permitted to proceed.",
+    "whenNotToUse": "Do not use for authentication errors (401 should be used if the issue is missing/invalid credentials). Do not use 403 when a resource is truly not found but you're hiding its existence (some applications might still choose 404 for security).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 404,
+    "name": "Not Found",
+    "meaning": "The server can't find the requested resource. This response code indicates that the server itself does not recognize the request path or resource.",
+    "whenToUse": "When the requested URL is not valid on the server or the resource has been removed and the server wants to pretend it doesn't exist. It’s a generic response for an unavailable resource.",
+    "example": "GET /api/items/999 returns 404 Not Found if item 999 does not exist on the server.",
+    "whenNotToUse": "Do not use if the resource is forbidden to the user but exists (in that case, 403 could be used depending on your design). Also, do not use for server errors or invalid request formats.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 405,
+    "name": "Method Not Allowed",
+    "meaning": "The request method is known by the server but is not supported for the target resource.",
+    "whenToUse": "When the client uses an HTTP method that the resource does not allow. The server should send an Allow header listing acceptable methods for that resource.",
+    "example": "Submitting a PUT request to an endpoint that only supports GET returns 405 Method Not Allowed, along with an Allow: GET, POST header to inform the client of allowed methods.",
+    "whenNotToUse": "Do not use for unknown or unrecognized HTTP methods (use 400 or 501 in those cases). Also avoid if the method is allowed but something else failed (that should yield a different 4xx or 5xx code).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 406,
+    "name": "Not Acceptable",
+    "meaning": "The server cannot generate a response that is acceptable according to the Accept headers sent in the request.",
+    "whenToUse": "When content negotiation fails: the client’s Accept (or similar) headers specify a response format that the server cannot fulfill, so no suitable representation is available.",
+    "example": "A client requests /data with Accept: text/xml, but the server only produces JSON; it returns 406 Not Acceptable to indicate it cannot provide content in the requested format.",
+    "whenNotToUse": "Do not use if the server chooses to ignore the Accept header and send a default format (then 200 could be used). Only use 406 when the server actively honors Accept headers and finds no match.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 407,
+    "name": "Proxy Authentication Required",
+    "meaning": "The client must first authenticate itself with the proxy. Similar to 401 Unauthorized, but for proxy usage.",
+    "whenToUse": "When a request is being made through a proxy that requires authentication and the proper credentials have not been provided. The proxy must return a Proxy-Authenticate header with a challenge.",
+    "example": "A client trying to browse the web through a corporate proxy without logging in receives 407 Proxy Authentication Required, indicating it needs to provide valid proxy credentials.",
+    "whenNotToUse": "Do not use for origin server authentication (use 401 for that). This is specific to proxies requiring authentication before forwarding client requests.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 408,
+    "name": "Request Timeout",
+    "meaning": "The server timed out waiting for the request. The client did not produce a request within the time that the server was prepared to wait.",
+    "whenToUse": "When the server closes the connection due to a client’s slow request or inactivity. It indicates that the client may retry the request at a later time without modifications.",
+    "example": "If a client begins a request but stops sending data for too long, the server may respond with 408 Request Timeout and close the connection to free up resources.",
+    "whenNotToUse": "Do not use if the server has received and is processing the request (then the response should be based on that processing, not a timeout). Typically, 408 is generated by the server automatically rather than by application logic.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 409,
+    "name": "Conflict",
+    "meaning": "The request could not be completed due to a conflict with the current state of the target resource.",
+    "whenToUse": "When a request cannot be processed because of a conflict, such as an edit conflict in the case of multiple updates or a violation of resource state assumptions.",
+    "example": "Attempting to create a resource that already exists (and uniqueness is required) can result in 409 Conflict, indicating the conflict between the new resource and an existing one.",
+    "whenNotToUse": "Do not use for general validation errors (422 may be more appropriate if it's semantically correct data that can't be processed) or for conflicts that are best represented by a specific 4xx code (like 412 for precondition failures).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 410,
+    "name": "Gone",
+    "meaning": "The target resource is no longer available at the server and no forwarding address is known. This condition is expected to be permanent.",
+    "whenToUse": "When a resource used to exist but has been intentionally removed, and you want to inform clients that it will not be available again in the future.",
+    "example": "A specific article URL that has been deleted from a site could return 410 Gone to indicate it was intentionally removed and will not be coming back, signaling clients or search engines to remove references.",
+    "whenNotToUse": "Do not use for temporary unavailability (use 404 or 503 depending on the scenario). If the condition might be reversed or is not permanent, use a different status.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 411,
+    "name": "Length Required",
+    "meaning": "The server refuses to accept the request without a defined Content-Length header.",
+    "whenToUse": "When the server requires a Content-Length header in the request (often in POST/PUT) and the client has not sent it.",
+    "example": "If a client sends a POST with chunked transfer encoding or no Content-Length where it's mandated, the server can respond with 411 Length Required to indicate the client must specify the length.",
+    "whenNotToUse": "Do not use if the length is provided or not needed. This is specific to situations where knowing the content length is required by the server to process the request.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 412,
+    "name": "Precondition Failed",
+    "meaning": "One or more conditions given in the request header fields evaluated to false. The server does not meet a precondition specified by the client.",
+    "whenToUse": "When the request includes conditional headers (like If-Match, If-Unmodified-Since, etc.) and the server determines that one of those conditions is not met for the target resource.",
+    "example": "A GET request with If-Unmodified-Since on a resource that has been modified since that date returns 412 Precondition Failed, because the precondition was not satisfied.",
+    "whenNotToUse": "Do not use if there were no precondition headers in the request. If the request fails for other reasons unrelated to conditions (e.g., validation), use a different status code.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 413,
+    "name": "Payload Too Large",
+    "meaning": "The request entity is larger than the server is willing or able to process. Previously called \"Request Entity Too Large.\"",
+    "whenToUse": "When the client sends a request body that is larger than the server’s limits or capabilities (e.g., uploading a file exceeding max size).",
+    "example": "Uploading a 50 MB file to a server that only accepts up to 10 MB returns 413 Payload Too Large, indicating the request size exceeds the allowed limit.",
+    "whenNotToUse": "Do not use if the problem is not size-related (for example, if the content is the wrong type, use 415, or if there's a semantic issue, 422). Also do not use if the server will stream or handle large payloads by design.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 414,
+    "name": "URI Too Long",
+    "meaning": "The URI requested by the client is longer than the server is willing or able to interpret. Often the result of too much data being put in a GET request query string.",
+    "whenToUse": "When the requested URL (including path and query) is excessively long, typically beyond server or application limits. This usually happens if form data is erroneously sent via GET or if there's an infinite redirect loop generating a huge URL.",
+    "example": "A client sending a very large query string (perhaps by encoding a big JSON payload into the URL) may receive 414 URI Too Long, indicating the server cannot process such a long URL.",
+    "whenNotToUse": "Do not use if the URL length is within acceptable limits but other issues exist. If a different problem is present (like unsupported media type), use the appropriate status code instead.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 415,
+    "name": "Unsupported Media Type",
+    "meaning": "The request entity has a media type which the server or resource does not support. The server cannot process the request payload format.",
+    "whenToUse": "When the client sends data in a format that the server does not accept or cannot process (for instance, sending XML to an endpoint that only handles JSON).",
+    "example": "POST /api/upload with Content-Type: text/xml to a JSON API returns 415 Unsupported Media Type if the server refuses to process XML payloads.",
+    "whenNotToUse": "Do not use if the issue is about content that is syntactically correct but semantically unprocessable (use 422 in such cases). Also do not use if the media type is fine but something else failed (then use the appropriate code).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 416,
+    "name": "Range Not Satisfiable",
+    "meaning": "The client has asked for a portion of the resource (via the Range header), but the server cannot supply that portion. Often because the requested range is outside the size of the target file.",
+    "whenToUse": "When responding to a Range request where the range specifications cannot be met. The server should include a Content-Range header indicating the valid range if possible.",
+    "example": "If a client requests bytes 500-999 of a file that is only 300 bytes long, the server responds with 416 Range Not Satisfiable, possibly including Content-Range: */300 to indicate the size.",
+    "whenNotToUse": "Do not use for requests without Range headers. If the request isn't a range request, there's no range to be unsatisfiable (other errors might apply instead if something else is wrong).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 417,
+    "name": "Expectation Failed",
+    "meaning": "The server cannot meet the requirements of the Expect request-header field. This usually relates to the Expect: 100-continue header.",
+    "whenToUse": "When the client’s request includes an Expect header that the server cannot or will not fulfill. Often, if a server does not support the Expectation indicated (like \"100-continue\" or other token).",
+    "example": "A client sends a request with Expect: 100-continue but the server does not support this expectation, it can respond with 417 Expectation Failed, indicating the expectation cannot be met.",
+    "whenNotToUse": "Do not use if there was no Expect header in the request. If the failure is due to something else (e.g., authentication, etc.), use the appropriate status code instead.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 418,
+    "name": "I'm a teapot",
+    "meaning": "A playful and non-standard status code indicating that the server refuses to brew coffee because it is permanently a teapot. Defined as an April Fools' joke in RFC 2324.",
+    "whenToUse": "Traditionally not used in real applications except as an Easter egg. Some services might use it humorously or to indicate a request was blocked in a whimsical way.",
+    "example": "Sending a request to a coffee-brewing API endpoint on a teapot might return 418 I'm a teapot as a joke response. For example, some websites return 418 as an Easter egg for teapot-related requests.",
+    "whenNotToUse": "Do not use for serious purposes. This code is not meant for real HTTP operations. Use standard 4xx or 5xx codes for actual errors instead of 418.",
+    "source": "RFC 2324 (April Fools)"
+  },
+  {
+    "code": 419,
+    "name": "Page Expired",
+    "meaning": "A non-standard status code used by some frameworks (e.g., Laravel) to indicate that a session or token has expired.",
+    "whenToUse": "When a CSRF token or session has expired and the server rejects the request for security reasons, frameworks like Laravel use 419 to signify this client-side issue.",
+    "example": "In Laravel, an AJAX request with an expired CSRF token returns 419 Page Expired, prompting the client to refresh or reauthenticate.",
+    "whenNotToUse": "Do not use outside of specific frameworks or contexts that expect 419. For standard HTTP, there's no official 419 code; other codes like 401 or 403 might be used depending on the scenario.",
+    "source": "Unofficial (Laravel Framework)"
+  },
+  {
+    "code": 420,
+    "name": "Method Failure / Enhance Your Calm",
+    "meaning": "A deprecated or unofficial status code with multiple meanings: originally proposed in a WebDAV context for \"Method Failure\" (used by Spring Framework), and famously used by the Twitter API to indicate rate limiting with the message \"Enhance Your Calm.\"",
+    "whenToUse": "Not used in standardized HTTP. \"Method Failure\" was used in some WebDAV-related responses when a method failed (now largely replaced by standard 4xx codes). Twitter used 420 to signal the client is being rate-limited (which later changed to 429).",
+    "example": "A Spring application might have returned 420 Method Failure for a failed API action, and early versions of Twitter’s Search API returned 420 Enhance Your Calm when the client was making too many requests.",
+    "whenNotToUse": "Do not use 420 in new APIs. For rate limiting, use 429 Too Many Requests; for method failures or other errors, use appropriate 4xx/5xx codes. 420 is not an officially recognized code.",
+    "source": "Unofficial (Spring WebDAV proposal / Twitter API v1)"
+  },
+  {
+    "code": 421,
+    "name": "Misdirected Request",
+    "meaning": "The request was directed to a server that is not able to produce a response (for example, the request was sent to the wrong server due to reuse of a connection).",
+    "whenToUse": "When the server host name in the request (URL) doesn’t match the server that received the request, often due to a connection reuse or misconfiguration in HTTP/2. The server signals that it cannot respond because it wasn’t meant to receive that request.",
+    "example": "In an HTTP/2 connection, if a client erroneously reuses a connection for the wrong host, that server may respond with 421 Misdirected Request, telling the client to retry on a correct connection.",
+    "whenNotToUse": "Do not use for general routing failures. This is specific to scenarios like virtual host misrouting. If the request is correctly routed but fails for other reasons, use a different status code.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 422,
+    "name": "Unprocessable Content",
+    "meaning": "The request was well-formed (syntactically correct) but the server cannot process it due to semantic errors.",
+    "whenToUse": "When the server understands the content type and syntax of the request entity, but it was unable to process the contained instructions. Often used for validation errors on a request that has the correct format but invalid data.",
+    "example": "POST /api/users with a JSON body that is syntactically correct but fails business logic validation (e.g., password too short) may result in 422 Unprocessable Content to indicate the semantic issues.",
+    "whenNotToUse": "Do not use for malformed requests (use 400) or authentication/authorization errors. 422 is for scenarios where the request is understood but cannot be processed because of logic or semantic problems.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 423,
+    "name": "Locked",
+    "meaning": "The resource that is being accessed is locked and cannot be modified.",
+    "whenToUse": "When a WebDAV operation is attempted on a resource that has been locked (by a lock mechanism in WebDAV) and the server is refusing to proceed until the resource is unlocked.",
+    "example": "A WebDAV client trying to DELETE a file that has an active lock (by another user/process) might receive 423 Locked, indicating the file is currently locked.",
+    "whenNotToUse": "Do not use if the concept of locking is not in play. Outside WebDAV or similar scenarios, this code is not commonly used. Use other appropriate 4xx codes if the resource isn't accessible for different reasons.",
+    "source": "RFC 4918 (WebDAV)"
+  },
+  {
+    "code": 424,
+    "name": "Failed Dependency",
+    "meaning": "The request failed because it depended on another operation that failed. This is used in contexts like WebDAV where an earlier request (e.g., a PROPPATCH) failed, causing the current request to fail as well.",
+    "whenToUse": "When an operation cannot succeed because a previous action in the context failed. Often used in multi-step or batch processing scenarios to indicate that the chain of operations was broken by a failure earlier.",
+    "example": "If a client attempts a WebDAV PROPPATCH on a resource after a previous related operation failed (like locking the resource), the server might return 424 Failed Dependency to indicate it can't proceed due to that earlier failure.",
+    "whenNotToUse": "Do not use in single-operation requests that aren't dependent on prior requests. This is typically relevant in multi-part or transaction-like requests where one part failing affects another.",
+    "source": "RFC 4918 (WebDAV)"
+  },
+  {
+    "code": 425,
+    "name": "Too Early",
+    "meaning": "The server is unwilling to process a request that might be replayed, which could happen if the request is received prior to the proper handshake (e.g., replay of early data in TLS 1.3).",
+    "whenToUse": "When a server wants to reject a request that was sent in early TLS handshake (before handshake completion) because processing it could lead to a replay attack. Essentially, the server asks the client to wait for the handshake to complete and then retry.",
+    "example": "If a client sends a request in TLS 1.3 early data (0-RTT) and the server finds it unsafe to process because it could be replayed, it may respond with 425 Too Early, signaling the client to retry the request after the handshake.",
+    "whenNotToUse": "Do not use for general rate limiting or scheduling delays. 425 is specific to cases of potential replay attacks with early data. For normal conditions, use other codes like 503 if deferring processing for a short time.",
+    "source": "RFC 8470"
+  },
+  {
+    "code": 426,
+    "name": "Upgrade Required",
+    "meaning": "The server refuses to perform the request using the current protocol but might do so if the client upgrades to a different protocol. The server sends an Upgrade header in the response to indicate the required protocol(s).",
+    "whenToUse": "When a client needs to switch to a different protocol (such as TLS/HTTPS or a newer HTTP version) to access the resource. The server includes an Upgrade or similar header to specify what protocol to use.",
+    "example": "An HTTP server might return 426 Upgrade Required if a client tries to use a plain HTTP connection for an endpoint that mandates HTTPS, possibly with a header suggesting \"Upgrade: TLS/1.2\".",
+    "whenNotToUse": "Do not use if the request can be handled over the current protocol. This is specific to scenarios requiring protocol change. For example, don't use 426 just to suggest a newer API version (that should use application-level versioning logic or 301 redirects).",
+    "source": "RFC 2817"
+  },
+  {
+    "code": 428,
+    "name": "Precondition Required",
+    "meaning": "The origin server requires the request to be conditional. This response is sent to ensure that the client is doing a conditional request (like If-Match) because the resource content might have changed on the server, preventing lost update problems.",
+    "whenToUse": "When an API or server requires that clients include preconditions (usually ETag/If-Match or similar) on methods like PUT to avoid conflicts. If the request isn't conditional, the server rejects it with 428, telling the client to retry with the appropriate precondition headers.",
+    "example": "A client attempts to PUT an update to a resource without sending an If-Match header. If the server mandates using ETags to prevent overwriting changes, it responds with 428 Precondition Required to enforce this rule.",
+    "whenNotToUse": "Do not use if the server does not implement conditional update requirements. Also not applicable if the request already had appropriate precondition headers (in which case either process it or use 412 if the conditions fail).",
+    "source": "RFC 6585"
+  },
+  {
+    "code": 429,
+    "name": "Too Many Requests",
+    "meaning": "The user has sent too many requests in a given amount of time (rate limiting). The server is throttling the client, typically with a Retry-After header to indicate when to try again.",
+    "whenToUse": "When a client has exceeded the rate limits defined by the server or API. It indicates the client should slow down or stop sending requests for a while.",
+    "example": "An API allows 100 requests per minute; if a client sends the 101st request within that minute, the server may respond with 429 Too Many Requests, possibly including a Retry-After header telling the client when it can resume.",
+    "whenNotToUse": "Do not use for general throttling without communicating limits. Ensure that this is used in the context of rate limiting. If the error is due to something else (like a single request being too large or malformed), use a different code.",
+    "source": "RFC 6585"
+  },
+  {
+    "code": 430,
+    "name": "Request Header Fields Too Large / Shopify Error",
+    "meaning": "A non-standard status code used by Shopify in two scenarios: earlier as a variant of 431 when too many URLs or headers were sent (deprecated in favor of 429/431), and also used to indicate a security or spam rejection by Shopify.",
+    "whenToUse": "Generally not used outside Shopify’s infrastructure. It was used when a client made too many rapid requests (instead of 429) or the headers were too large (instead of 431), or when Shopify detected a malicious request pattern.",
+    "example": "Older Shopify APIs might return 430 if a client exceeded certain request limits, or if a request was flagged as malicious or too large. For example, too many requests in a short time could yield 430 Shopify Security Rejection.",
+    "whenNotToUse": "Do not use in new implementations. Use 429 for rate limiting and 431 for header size issues. The 430 code is not part of any official HTTP standard and was specific to Shopify’s use cases.",
+    "source": "Unofficial (Shopify)"
+  },
+  {
+    "code": 431,
+    "name": "Request Header Fields Too Large",
+    "meaning": "The server is unwilling to process the request because either an individual header field, or all the header fields collectively, are too large.",
+    "whenToUse": "When the client sends headers that are too large for the server to handle (either one header is too big, or the total size of headers is too big). The server can indicate that the request should be reduced and possibly which header is the issue.",
+    "example": "If a client sends a massive cookie header that the server cannot process, the server might respond with 431 Request Header Fields Too Large, possibly implying the client should trim down the header size and retry.",
+    "whenNotToUse": "Do not use if the headers are fine but some other part of the request is too large (body too large would be 413). Also avoid if the error is unrelated to header size (use an appropriate code for the actual error).",
+    "source": "RFC 6585"
+  },
+  {
+    "code": 440,
+    "name": "Login Time-out",
+    "meaning": "A Microsoft IIS/Exchange specific status indicating that the user's session has expired or is not authenticated, essentially a login timeout.",
+    "whenToUse": "When a client’s session or token has expired on a Microsoft server (like an Outlook Web Access session), and the server directs the client to reauthenticate. This is not an official HTTP status but used by some Microsoft products.",
+    "example": "In some versions of Microsoft Exchange or SharePoint, if a user's session cookie is expired, the server may return 440 Login Time-out, prompting the client to redirect to a login page.",
+    "whenNotToUse": "Do not use in non-Microsoft contexts. This is not part of the official HTTP standard. For standard applications, a 401 or 403 with a login page would be used instead.",
+    "source": "Unofficial (Microsoft IIS/Exchange)"
+  },
+  {
+    "code": 449,
+    "name": "Retry With",
+    "meaning": "A Microsoft extension indicating the request should be retried after doing the appropriate action. Typically, it is returned when the server cannot fulfill the request because the client needs to provide more information.",
+    "whenToUse": "Used in Microsoft IIS (especially in scenarios like Microsoft Azure or older services) when the server expects the client to retry the request with certain conditions met (for example, after providing required information or changing something in the request).",
+    "example": "In Microsoft IIS, 449 Retry With might be seen if a request is missing some required conditions; the response implies the client should \"retry with\" the necessary information. For instance, if an API requires a certain parameter and it's missing, IIS could respond with 449 (instead of a 400).",
+    "whenNotToUse": "Do not use outside Microsoft-specific environments. This is not an official HTTP status code. In standard usage, you'd typically send a 400 Bad Request or similar, possibly with guidance in the response body for the client.",
+    "source": "Unofficial (Microsoft IIS)"
+  },
+  {
+    "code": 450,
+    "name": "Blocked by Windows Parental Controls",
+    "meaning": "A Microsoft extension code indicating that the request was blocked due to Windows Parental Controls being turned on.",
+    "whenToUse": "Used by Microsoft (for example, in Windows Live Family Safety) when content is blocked for a user due to parental control settings. The server or intermediary filters the request and returns this status to explain the block.",
+    "example": "When a child account attempts to access a site or resource disallowed by parental controls, the system may return 450 Blocked by Windows Parental Controls, indicating the content is blocked by policy.",
+    "whenNotToUse": "Do not use outside the context of Microsoft’s parental control systems. It's not a standard HTTP status. For general content filtering, a 403 Forbidden might be used with a custom message instead.",
+    "source": "Unofficial (Microsoft)"
+  },
+  {
+    "code": 451,
+    "name": "Unavailable For Legal Reasons",
+    "meaning": "The server is denying access to the resource as a consequence of a legal demand (for example, censorship or government-mandated blocked content).",
+    "whenToUse": "When access to a resource is blocked due to legal reasons – such as a court order, law, or regulation – and the server is giving an explicit status code to indicate this. Often used to transparently inform the user that the resource is intentionally unavailable for legal compliance.",
+    "example": "A website hosted in one country returns 451 Unavailable For Legal Reasons to users from a region where a specific page or item has been legally prohibited (e.g., a news article censored by law). The response might include an explanation or link to the legal authority.",
+    "whenNotToUse": "Do not use for general authorization or authentication issues. Only use 451 when there's a legal or policy reason preventing access. If a resource is removed or unavailable for non-legal reasons, use other appropriate codes (404, 410, etc.).",
+    "source": "RFC 7725"
+  },
+  {
+    "code": 500,
+    "name": "Internal Server Error",
+    "meaning": "A generic error message indicating that the server encountered an unexpected condition that prevented it from fulfilling the request.",
+    "whenToUse": "When an unexpected runtime error or exception occurs on the server side, and no more specific 5xx code is suitable. It's a catch-all for server errors that don't have a dedicated code.",
+    "example": "If an application throws an unhandled exception or the server runs out of memory while processing the request, it might return 500 Internal Server Error because it cannot complete the request as expected.",
+    "whenNotToUse": "Do not use for client-side errors or predictable failures that have specific codes. Use more specific 5xx codes if applicable (e.g., 502 for upstream errors, 503 for overload or maintenance) before resorting to 500.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 501,
+    "name": "Not Implemented",
+    "meaning": "The server does not support the functionality required to fulfill the request. Usually implies that the server does not recognize the request method or lacks the ability to fulfill it.",
+    "whenToUse": "When the client requests an HTTP method or feature that the server does not support. This is not about a temporary condition; it indicates the feature may be unimplemented on the server.",
+    "example": "If a client sends a WebDAV request (like MKCALENDAR) to a server that doesn’t support WebDAV, the server might respond with 501 Not Implemented, indicating it doesn’t know how to handle that method.",
+    "whenNotToUse": "Do not use when the server can handle the method but something goes wrong during processing (that should be 500 or other 5xx errors). Also, don't confuse with 405 (405 is for recognized but disallowed methods on a resource, 501 is for method not recognized at all by the server).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 502,
+    "name": "Bad Gateway",
+    "meaning": "The server, while acting as a gateway or proxy, received an invalid response from the upstream server it accessed in attempting to fulfill the request.",
+    "whenToUse": "When a server is acting as a proxy or gateway (like an API gateway, reverse proxy, or load balancer) and the backend service returned an error or something invalid that prevents it from serving a proper response to the client.",
+    "example": "A reverse proxy tries to fetch data from an upstream service that crashes or returns malformed data; the proxy returns 502 Bad Gateway to the client because it got an invalid response from the upstream.",
+    "whenNotToUse": "Do not use if you are not acting as a proxy or gateway. For direct server errors, use 500 or appropriate code. Also, if the upstream response is valid but indicates an error (like a normal 500 from upstream), the gateway might just relay that code rather than turning it into 502.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 503,
+    "name": "Service Unavailable",
+    "meaning": "The server is currently unable to handle the request due to temporary overload or maintenance. This is usually a temporary state.",
+    "whenToUse": "When the server is down for maintenance or is overloaded and cannot handle requests at the moment. It indicates that the condition is likely temporary and the same request might succeed at a later time.",
+    "example": "If a website is undergoing scheduled maintenance, it may return 503 Service Unavailable with a message like 'We'll be back soon' and possibly a Retry-After header to tell clients when to try again.",
+    "whenNotToUse": "Do not use for permanent failures or unrecoverable server errors (500 series). 503 should not be used if the service is operational but the request itself is faulty (that would be a 4xx). It's specifically for temporary unavailability of the service itself.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 504,
+    "name": "Gateway Timeout",
+    "meaning": "The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server. Essentially, the upstream server failed to send a request in time.",
+    "whenToUse": "When a server is acting as a proxy or gateway and a request to the upstream takes too long or times out, so the intermediary gives up waiting and returns this error to the client.",
+    "example": "A CDN or reverse proxy tries to call an API service, but the API is slow and doesn’t respond within the timeout window; the client receives 504 Gateway Timeout from the proxy indicating the upstream took too long.",
+    "whenNotToUse": "Do not use if your server is not a gateway or proxy. If your own server's processing times out internally, you might still use 503 or a custom scheme. 504 is specifically for timeouts in communication with another server.",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 505,
+    "name": "HTTP Version Not Supported",
+    "meaning": "The server does not support, or refuses to support, the HTTP protocol version used in the request. This implies the server cannot or will not use the protocol version to fulfill the request.",
+    "whenToUse": "When a client uses a newer or incompatible HTTP version that the server cannot handle. For instance, a server that only supports HTTP/1.1 might respond with 505 if it receives a request marked as HTTP/2 (and it hasn't upgraded or isn't capable).",
+    "example": "If a client mistakenly sends an HTTP/2.0 request to a server that only understands HTTP/1.1 (without negotiating via upgrade), the server could respond with 505 HTTP Version Not Supported indicating it can't process that version.",
+    "whenNotToUse": "Do not use if the issue is not with the protocol version. If content is fine but something else fails, use the relevant status. 505 is rarely used because version negotiation usually happens differently (e.g., ALPN for HTTP/2).",
+    "source": "RFC 9110"
+  },
+  {
+    "code": 506,
+    "name": "Variant Also Negotiates",
+    "meaning": "The server has an internal configuration error: the chosen variant resource is configured to engage in content negotiation itself, leading to a circular reference and no appropriate variant.",
+    "whenToUse": "When a server is using transparent content negotiation and a configuration problem results in a negotiation cycle (for example, the resource is configured to reference itself as a negotiation variant). This is a rare error mainly described in negotiation mechanisms.",
+    "example": "A server configured for content negotiation ends up with a variant that also tries to negotiate. When the client requests a resource, the server finds that the variant is not a concrete resource but another negotiable resource, so it returns 506 Variant Also Negotiates indicating a server configuration issue.",
+    "whenNotToUse": "Do not use for normal content negotiation failures (those might result in 300 or 406). 506 specifically signals a server configuration issue in the negotiation setup. It is very rarely encountered in practice.",
+    "source": "RFC 2295"
+  },
+  {
+    "code": 507,
+    "name": "Insufficient Storage",
+    "meaning": "The server is unable to store the representation needed to complete the request. Often related to WebDAV operations, indicating that the server or resource does not have enough storage for the request.",
+    "whenToUse": "When a server (often in the context of WebDAV or similar file storage operations) runs out of space or quota to fulfill a request that would modify or create a resource. For example, an upload or file creation cannot be completed because of storage limitations.",
+    "example": "A WebDAV service responding to a PUT request to upload a file might return 507 Insufficient Storage if the user's storage quota is exceeded or the disk is full, preventing the file from being saved.",
+    "whenNotToUse": "Do not use if the failure isn't due to storage. This is specifically about storage capacity problems. Other server errors should use different codes (500 for generic, 509 for bandwidth if you choose to signal that separately, etc.).",
+    "source": "RFC 4918 (WebDAV)"
+  },
+  {
+    "code": 508,
+    "name": "Loop Detected",
+    "meaning": "The server detected an infinite loop while processing the request. Typically used in the context of WebDAV when a recursive request has encountered a looping situation (like a circular reference in PROPFIND depth requests).",
+    "whenToUse": "When a WebDAV server or similar system encounters a situation where processing a request leads to an infinite loop, often because of a resource referring to itself or cyclical relationships in the data.",
+    "example": "A WebDAV PROPFIND on a directory that contains a symbolic link back to a parent directory could cause a loop; the server returns 508 Loop Detected to indicate it aborted the operation due to the loop.",
+    "whenNotToUse": "Do not use outside of scenarios where a loop in the request processing is actually detected. This code is mainly for specific extension contexts (WebDAV). Regular infinite loops in server code would typically just cause a 500 if anything, since the server might not catch and handle it explicitly with a 508.",
+    "source": "RFC 5842 (WebDAV)"
+  },
+  {
+    "code": 509,
+    "name": "Bandwidth Limit Exceeded",
+    "meaning": "A non-standard status code indicating that the bandwidth usage limit has been exceeded. Often used by hosting providers when a site goes over its allotted bandwidth.",
+    "whenToUse": "When a server or site has a bandwidth quota and that quota is exceeded, some servers (especially in shared hosting environments or control panels like cPanel) use this code to signify that no further data can be served until limits are reset.",
+    "example": "If a website has a monthly bandwidth cap and it is reached, requests to the site might start returning 509 Bandwidth Limit Exceeded, often accompanied by a page explaining that the bandwidth limit has been reached.",
+    "whenNotToUse": "Do not use in standardized HTTP contexts, since 509 is not an official code. This is specific to certain server setups. For general use, a 503 Service Unavailable might be used to indicate resource limits, but many stick to 509 for bandwidth issues for clarity in hosting environments.",
+    "source": "Unofficial (Apache/cPanel)"
+  },
+  {
+    "code": 510,
+    "name": "Not Extended",
+    "meaning": "Further extensions to the request are required for the server to fulfill it. The server is indicating that it needs certain extensions (often specified in the request header) to be present.",
+    "whenToUse": "When a client makes a request that is valid but not sufficient because it lacks certain extension declarations. This was introduced by an HTTP extension framework (RFC 2774) to indicate that the server could not process the request without specific extensions to the protocol being declared.",
+    "example": "A client might send a request that uses an extension to HTTP that the server recognizes but requires more information about. The server responds 510 Not Extended, perhaps along with a header (like \"Required\") indicating what extensions the client needs to support or include for the request to succeed.",
+    "whenNotToUse": "Do not use for normal feature negotiation or unsupported features (501 is for not implemented features). 510 is very rarely used and only makes sense in the context of the extension framework which is not widely adopted.",
+    "source": "RFC 2774"
+  },
+  {
+    "code": 511,
+    "name": "Network Authentication Required",
+    "meaning": "The client needs to authenticate to gain network access. Typically seen in captive portal scenarios where a user must login to a network before proceeding.",
+    "whenToUse": "When an intermediary (like a Wi-Fi hotspot or corporate network gateway) intercepts requests and requires the user to authenticate or accept terms before allowing internet access. The proxy uses 511 to notify the client that it should prompt the user to log in to the network.",
+    "example": "When connecting to a public Wi-Fi, the first HTTP request might be met with 511 Network Authentication Required, causing the browser to redirect to a login/portal page for credential input, after which normal access is granted.",
+    "whenNotToUse": "Do not use for ordinary application authentication (use 401 for that). 511 is not for APIs or websites requiring login; it's specifically for network access control scenarios by intercepting proxies/gateways.",
+    "source": "RFC 6585"
+  },
+  {
+    "code": 520,
+    "name": "Web Server Returned an Unknown Error",
+    "meaning": "A Cloudflare-specific status indicating that the origin server returned an unexpected or unknown response. It’s essentially a catch-all when the origin’s response is something Cloudflare doesn't know how to handle (not a standard HTTP response).",
+    "whenToUse": "Used by Cloudflare's reverse proxy service when the origin server responds with something that is empty or not recognizable as a valid HTTP response, or closes the connection unexpectedly. It tells the client that something went wrong but the details are not clear.",
+    "example": "If Cloudflare requests content from an origin server and the server responds with gibberish or an empty response (not even headers), Cloudflare will return a 520 error to the client to indicate an unknown error at the origin.",
+    "whenNotToUse": "Do not use outside of Cloudflare or similar proxy contexts. As a client or origin developer, if you see a 520, it usually means the issue is with the origin server's response, not a code you'd intentionally send. For standard servers, prefer using explicit 5xx errors.",
+    "source": "Unofficial (Cloudflare)"
+  },
+  {
+    "code": 521,
+    "name": "Web Server Is Down",
+    "meaning": "A Cloudflare-specific status indicating that the origin web server refused the connection. Cloudflare could not establish a connection to the origin server, perhaps because it is offline.",
+    "whenToUse": "When Cloudflare (or a similar intermediary) cannot reach the origin server at all (connection refused or host down). It tells the client that the origin server appears to be offline or unreachable, distinct from a timeout (522) or other issues.",
+    "example": "Cloudflare will return a 521 Web Server Is Down if, for example, the origin server is not running or is actively refusing connections on the port. The client sees this and knows the site is down (at least from Cloudflare’s perspective).",
+    "whenNotToUse": "Do not use on a typical server; this is generated by proxies like Cloudflare. If you're running your own gateway and the upstream is down, a more standard approach is 502 or 504. 521 is specifically part of Cloudflare's error set.",
+    "source": "Unofficial (Cloudflare)"
+  },
+  {
+    "code": 522,
+    "name": "Connection Timed Out",
+    "meaning": "A Cloudflare-specific status indicating that the proxy did not receive a timely response from the origin server. It is essentially a timeout between Cloudflare and the origin.",
+    "whenToUse": "When Cloudflare can connect to the origin server but the server takes too long to respond to the request. This is similar to a 504 but specifically in the context of Cloudflare communicating with the origin.",
+    "example": "If the origin server is overwhelmed or slow and doesn't respond to Cloudflare's request within Cloudflare’s timeout window, Cloudflare returns a 522 Connection Timed Out to the client to signal the upstream timeout.",
+    "whenNotToUse": "Do not use directly on origin servers. This is meant for proxies/gateways. If you are implementing a proxy or load balancer and want a similar concept, you might use 504 Gateway Timeout. 522 is part of Cloudflare’s nomenclature for timeouts.",
+    "source": "Unofficial (Cloudflare)"
+  },
+  {
+    "code": 523,
+    "name": "Origin Is Unreachable",
+    "meaning": "A Cloudflare-specific code indicating that the origin server was unreachable. This could be due to DNS issues, network routing problems, or the server not responding at the network level.",
+    "whenToUse": "When the proxy (Cloudflare) cannot even reach the origin network or get any response due to network errors. It’s as if the server doesn’t exist at the given address or is unreachable due to network partitions.",
+    "example": "Cloudflare returns 523 Origin Is Unreachable if, for example, the DNS for the origin is resolvable but no IP route is available, or the server is completely unreachable (no ping, no TCP handshake). It tells the user the origin can't be contacted at all.",
+    "whenNotToUse": "Do not use on typical servers. This is specifically a proxy-to-origin network issue. Standard clients or servers won't use 523; they'd either time out or fail connection without an HTTP status. This code is part of Cloudflare’s specific error reporting.",
+    "source": "Unofficial (Cloudflare)"
+  },
+  {
+    "code": 524,
+    "name": "A Timeout Occurred",
+    "meaning": "A Cloudflare-specific status indicating that a successful connection was made to the origin server, but the origin did not produce a response in time. It's a variation of a timeout where the TCP connection succeeded but the HTTP response did not complete in time.",
+    "whenToUse": "When the origin server is partially reachable (the connection is established) but the server is too slow to respond fully. Cloudflare uses 524 to differentiate this scenario from a lower-level network timeout (522).",
+    "example": "Cloudflare might show a 524 A Timeout Occurred if it connected to an origin and sent the request, but the origin took longer than Cloudflare's maximum waiting time to send back a response (perhaps due to a long-running process or hang).",
+    "whenNotToUse": "Do not confuse with 522; 524 implies the handshake was okay but the server didn't respond in time. As an origin server, you wouldn’t send this. As a proxy developer, you might stick to 504 for all timeouts, but Cloudflare splits them. Outside Cloudflare, 524 is not used.",
+    "source": "Unofficial (Cloudflare)"
+  },
+  {
+    "code": 525,
+    "name": "SSL Handshake Failed",
+    "meaning": "A Cloudflare-specific status indicating that the SSL/TLS handshake between Cloudflare and the origin server failed. This often means Cloudflare couldn’t establish a secure connection to the origin (certificate issues, protocol mismatch, etc.).",
+    "whenToUse": "When the proxy fails to negotiate an SSL/TLS session with the origin server. Causes can include the origin having an invalid SSL certificate, unsupported protocol versions, or other issues in the handshake process.",
+    "example": "Cloudflare will return a 525 SSL Handshake Failed if, for example, the origin server has an expired or self-signed certificate that Cloudflare doesn’t accept, or if the origin only supports ciphers/protocols that are not compatible with Cloudflare’s requirements.",
+    "whenNotToUse": "Do not use in standard server responses. This is reported by proxies. If an origin server experiences handshake issues with a client directly, it wouldn’t send a 525; the connection would just fail. 525 is part of Cloudflare’s error set to inform the client that the proxy-to-origin SSL handshake failed.",
+    "source": "Unofficial (Cloudflare)"
+  },
+  {
+    "code": 526,
+    "name": "Invalid SSL Certificate",
+    "meaning": "A Cloudflare-specific status indicating that the origin server presented an SSL/TLS certificate that Cloudflare considered invalid (e.g., self-signed, expired, or otherwise untrusted).",
+    "whenToUse": "When the proxy can connect over TLS but the certificate validation fails. Cloudflare uses this to signal to the user that the handshake was made but the certificate from the origin is not acceptable (no trusted CA, CN mismatch, etc.).",
+    "example": "If a website’s origin has an expired SSL certificate, Cloudflare may return 526 Invalid SSL Certificate to the end-user, essentially saying it cannot establish a trusted secure connection to the origin due to certificate issues.",
+    "whenNotToUse": "Do not use on a typical server directly to clients. A normal client connecting to a server with an invalid cert will not receive an HTTP 526; instead, the TLS connection would fail entirely. 526 is a byproduct of Cloudflare’s attempt to connect on behalf of the user.",
+    "source": "Unofficial (Cloudflare)"
+  },
+  {
+    "code": 527,
+    "name": "Railgun Error",
+    "meaning": "A Cloudflare-specific code (now obsolete) indicating an error with the Railgun protocol (Cloudflare's WAN optimization tool) between Cloudflare and the origin. It meant that the connection between Cloudflare and the Railgun server had an issue.",
+    "whenToUse": "When Cloudflare was using Railgun to accelerate connections to an origin, and that connection broke or experienced an error, Cloudflare would return a 527 to denote that the specialized connection failed. This code is not used anymore as Railgun is deprecated.",
+    "example": "A Cloudflare-enabled site with Railgun might have returned 527 if the Railgun listener at the origin crashed or if the Railgun connection was interrupted. The user would see a 527 error page indicating a Railgun communication error.",
+    "whenNotToUse": "Do not use in any current context. As this code is tied to a deprecated feature, it's effectively not seen in modern use. If not using Cloudflare or Railgun, you would never encounter or emit this code.",
+    "source": "Unofficial (Cloudflare, deprecated)"
+  },
+  {
+    "code": 529,
+    "name": "Site is overloaded",
+    "meaning": "A non-standard code used by certain services (e.g., Qualys SSL Labs API) to indicate that the site (or service) is temporarily overloaded and cannot process the request.",
+    "whenToUse": "When a service has a custom mechanism to signal overload separate from the standard 503. Qualys’s SSL Labs API, for example, uses 529 to tell clients that the server is busy or over capacity.",
+    "example": "Querying the SSL Labs analysis API during peak times might result in a 529 Site is overloaded, meaning the service cannot handle the request at the moment and the client should try again later.",
+    "whenNotToUse": "Do not use in general implementations as it’s not an official status code. For typical overload situations, 503 Service Unavailable (potentially with Retry-After) should be used. 529 is very specific to certain providers’ conventions.",
+    "source": "Unofficial (Qualys SSL Labs)"
+  },
+  {
+    "code": 530,
+    "name": "Site is frozen / Origin Unavailable",
+    "meaning": "A non-standard status code with different meanings depending on context: Pantheon hosting uses 530 to indicate a site has been frozen (usually for inactivity or billing issues), while Cloudflare/Shopify have used 530 when the origin host is unreachable (for instance, DNS failure or other origin errors).",
+    "whenToUse": "Pantheon: use 530 when a site is taken offline or \"frozen\" due to inactivity or account issues. Cloudflare/Shopify: use 530 as an error when the origin cannot be reached at all (similar to a DNS or routing error that prevents connecting to the origin).",
+    "example": "Pantheon’s platform might return 530 Site is frozen if a website has been archived due to the user not upgrading or it being idle. In a DNS context, Cloudflare may also return a 530 if it cannot resolve the origin's DNS or otherwise finds the origin unavailable, although Cloudflare more commonly uses 523 or other codes for similar situations.",
+    "whenNotToUse": "Do not use in standard HTTP situations, as 530 is not officially defined. These are very specific uses: Pantheon’s internal handling or Cloudflare/Shopify's error signaling. Use standard codes (such as 503 or 523) for general cases of site unavailability or DNS issues in your own systems.",
+    "source": "Unofficial (Pantheon / Cloudflare / Shopify)"
+  },
+  {
+    "code": 561,
+    "name": "Unauthorized (AWS ELB)",
+    "meaning": "A non-standard status code used by AWS Elastic Load Balancer (ALB/ELB) when it is configured with user authentication and the upstream identity provider reports an unauthorized error. Essentially, the load balancer is indicating the user couldn't be authenticated by the IdP.",
+    "whenToUse": "When an AWS Application Load Balancer is handling authentication (via OIDC or Cognito, etc.) and the authentication attempt fails (for reasons other than just missing credentials), it can surface a 561 error to the client. This means the authentication to an external IdP did not succeed.",
+    "example": "An ALB with built-in OAuth2 authentication redirects a user to sign in. If the identity provider responds with an error (like invalid credentials or user not authorized), the ALB might return 561 Unauthorized to the client to indicate the final outcome of authentication was failure.",
+    "whenNotToUse": "Do not expect to use this code outside of AWS load balancers. It's not a part of the HTTP standard. In normal applications, a 401 or 403 would be used for unauthorized access. 561 is specifically part of AWS’s custom status reporting for authentication integration.",
+    "source": "Unofficial (AWS ELB)"
+  },
+  {
+    "code": 598,
+    "name": "Network Read Timeout Error",
+    "meaning": "A non-standard status code used by some proxies (notably some Microsoft HTTP proxies or services like Amazon CloudFront) to indicate that a network read timed out. This typically means the proxy was reading from an upstream server and timed out.",
+    "whenToUse": "When a proxy or intermediate server times out while reading data from the upstream server, and chooses to signal that with a specific status code to the client (instead of the generic 504). 598 is a network read timeout behind the proxy.",
+    "example": "A client might receive a 598 Network Read Timeout from a proxy if the proxy connected to an origin, started reading a response, but the read hung or took too long mid-way. The proxy aborts and returns 598 to indicate this lower-level timeout event.",
+    "whenNotToUse": "Do not use in a standard server context. This is an informal convention for certain network infrastructure. Most systems would just use 504 for any timeout. 598 is rarely seen except in specific proxy or load balancer implementations that distinguish read vs connect timeouts.",
+    "source": "Unofficial (HTTP proxy)"
+  },
+  {
+    "code": 599,
+    "name": "Network Connect Timeout Error",
+    "meaning": "A non-standard status code used by some HTTP proxies to indicate that a network connection to the upstream server timed out (i.e., the proxy could not establish a connection to the origin).",
+    "whenToUse": "When a proxy tries to connect to an upstream server but fails to establish the connection within the timeout period, it may respond to the client with 599 to signal that the connection attempt timed out.",
+    "example": "If a proxy server cannot connect to the backend (for example, due to network issues or the server not listening) and the attempt times out rather than immediately refusing, the proxy might return a 599 Network Connect Timeout Error to the client.",
+    "whenNotToUse": "Do not use as a normal status code in applications. This is mostly used internally by certain proxies or client libraries to represent a connection timeout. Standard HTTP does not define 599, and typically connection timeouts would result in no HTTP response at all or a 504 if one wanted to signal a gateway timeout.",
+    "source": "Unofficial (HTTP proxy)"
+  },
+  {
+    "code": 783,
+    "name": "Unexpected Token",
+    "meaning": "A non-standard status code used by Shopify to indicate that the request contained a JSON syntax error. Essentially the server couldn't parse the JSON in the request.",
+    "whenToUse": "When a Shopify API endpoint receives a request with malformed JSON (invalid syntax), it may return 783 Unexpected Token to specifically denote that the JSON could not be parsed (unexpected token encountered in the JSON text).",
+    "example": "A client sends a POST to the Shopify API with a malformed JSON body (e.g., missing a comma or curly brace); Shopify responds with 783 Unexpected Token, meaning it found an unexpected token in the JSON and couldn’t parse the request body.",
+    "whenNotToUse": "Do not use in standard APIs. The proper response for a JSON parse error in a request would typically be 400 Bad Request with an error message. 783 is a very specialized code not recognized outside of Shopify’s context.",
+    "source": "Unofficial (Shopify)"
+  },
+  {
+    "code": 999,
+    "name": "Request Denied",
+    "meaning": "A non-standard status code famously used by LinkedIn (and perhaps other services) when a request is blocked by the website's security systems. It often appears when too many requests are made or when scraping is detected.",
+    "whenToUse": "When a service like LinkedIn deliberately blocks a client request (often to discourage bots or excessive scraping) and chooses to respond with a non-standard error code instead of a typical 429 or 403. It indicates the request was not granted, often for vague reasons.",
+    "example": "LinkedIn might return 999 Request Denied if someone tries to access certain pages or APIs without proper authentication or if the system suspects abuse (for example, rapid repeated requests scraping user profiles). The response essentially means \"no proper response available\".",
+    "whenNotToUse": "Do not use in standard web or API design. This code is not part of HTTP and clients may not know how to handle it. It's primarily known due to LinkedIn's historical usage. Use 429, 403, or other appropriate codes for blocking or rate limiting in normal scenarios.",
+    "source": "Unofficial (LinkedIn)"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "name": "http-codes",
+  "version": "1.0.0",
+  "description": "A simple micro app for web developers to lookup and understand HTTP response codes.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "generate": "node generate-pages.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.22"
+  }
+}
