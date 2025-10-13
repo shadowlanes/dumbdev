@@ -98,7 +98,7 @@ export default defineConfig({
       }
     ],
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/shadowlanes/webdev' }
+      { icon: 'github', link: 'https://github.com/shadowlanes/webdev/tree/main/apps/http-codes' }
     ]
   },
   head: [
