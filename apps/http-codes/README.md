@@ -16,21 +16,30 @@ This tool helps web developers quickly find information about HTTP status codes.
 
 ## Installation
 
-```bash
-# Installation instructions will be added when the app is implemented
-```
+No installation required. Simply open `index.html` in a web browser.
 
 ## Usage
 
-```bash
-# Usage instructions will be added when the app is implemented
-```
+1. Open `index.html` in your web browser.
+2. Type an HTTP status code (e.g., 404) in the search field.
+3. The details for the code will appear instantly below.
+4. Alternatively, append `?code=XXX` to the URL to directly view a specific code (e.g., `index.html?code=404`).
+
+For server deployment with routing (e.g., to support URLs like `/404`), configure your server to serve `index.html` for all routes and handle the code via query parameters.
 
 ## Development
 
+To run locally with a server:
+
 ```bash
-# Development instructions will be added when the app is implemented
+python3 -m http.server 8000
 ```
+
+Then open `http://localhost:8000` in your browser.
+
+The app consists of:
+- `index.html`: Main HTML page with embedded CSS and JavaScript
+- `http-codes.json`: Data file containing HTTP status code information
 
 ## License
 

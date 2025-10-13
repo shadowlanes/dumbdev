@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Codes Explainer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .code-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .section {
+            margin-bottom: 15px;
+        }
+        .section h3 {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .share-btn {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .share-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>HTTP Codes Explainer</h1>
+    <input type="text" id="search" placeholder="Enter HTTP status code (e.g., 404)">
+    <div id="results"></div>
+
+    <script>
+        let codes = [];
+
+        fetch('http-codes.json')
+            .then(response => response.json())
+            .then(data => {
+                codes = data;
+                checkHash();
+            });
+
+        document.getElementById('search').addEventListener('input', function() {
+            const query = this.value.trim();
+            if (query) {
+                const code = codes.find(c => c.code.toString() === query);
+                if (code) {
+                    displayCode(code);
+                } else {
+                    document.getElementById('results').innerHTML = '<p>No code found for: ' + query + '</p>';
+                }
+            } else {
+                document.getElementById('results').innerHTML = '';
+            }
+        });
+
+        function displayCode(code) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="code-title">${code.code} ${code.name}</div>
+                <div class="section">
+                    <h3>Meaning</h3>
+                    <p>${code.meaning}</p>
+                </div>
+                <div class="section">
+                    <h3>When to Use</h3>
+                    <p>${code.whenToUse}</p>
+                </div>
+                <div class="section">
+                    <h3>Example</h3>
+                    <p>${code.example}</p>
+                </div>
+                <div class="section">
+                    <h3>When Not to Use</h3>
+                    <p>${code.whenNotToUse}</p>
+                </div>
+                <button class="share-btn" onclick="shareURL()">Share</button>
+            `;
+        }
+
+        function checkHash() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeParam = urlParams.get('code');
+            if (codeParam) {
+                const code = codes.find(c => c.code.toString() === codeParam);
+                if (code) {
+                    displayCode(code);
+                    document.getElementById('search').value = codeParam;
+                }
+            }
+        }
+
+        function shareURL() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

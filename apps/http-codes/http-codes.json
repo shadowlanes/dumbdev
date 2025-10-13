@@ -1,0 +1,178 @@
+[
+  {
+    "code": 100,
+    "name": "Continue",
+    "meaning": "This interim response indicates that the client should continue the request or ignore the response if the request is already finished.",
+    "whenToUse": "When the server has received the request headers and the client should proceed to send the request body.",
+    "example": "Used in POST requests where the server acknowledges headers before processing the body.",
+    "whenNotToUse": "Do not use if the request is already complete."
+  },
+  {
+    "code": 101,
+    "name": "Switching Protocols",
+    "meaning": "This code is sent in response to an Upgrade request header from the client and indicates the protocol the server is switching to.",
+    "whenToUse": "When upgrading to a different protocol, such as WebSocket.",
+    "example": "Client requests upgrade to WebSocket, server responds with 101.",
+    "whenNotToUse": "Do not use for standard HTTP requests."
+  },
+  {
+    "code": 200,
+    "name": "OK",
+    "meaning": "The request succeeded. The result and meaning of 'success' depends on the HTTP method.",
+    "whenToUse": "For successful GET, HEAD, PUT, POST, etc., requests.",
+    "example": "GET /api/users returns 200 with user list.",
+    "whenNotToUse": "Do not use for errors or redirects."
+  },
+  {
+    "code": 201,
+    "name": "Created",
+    "meaning": "The request succeeded, and a new resource was created as a result.",
+    "whenToUse": "After successful POST or PUT requests that create a resource.",
+    "example": "POST /api/users creates a new user and returns 201.",
+    "whenNotToUse": "Do not use if no new resource is created."
+  },
+  {
+    "code": 202,
+    "name": "Accepted",
+    "meaning": "The request has been received but not yet acted upon. It is noncommittal.",
+    "whenToUse": "For asynchronous processing or batch operations.",
+    "example": "Submitting a job that will be processed later returns 202.",
+    "whenNotToUse": "Do not use if the request can be handled immediately."
+  },
+  {
+    "code": 204,
+    "name": "No Content",
+    "meaning": "There is no content to send for this request, but the headers are useful.",
+    "whenToUse": "For successful requests that don't return data, like DELETE.",
+    "example": "DELETE /api/users/123 returns 204 on success.",
+    "whenNotToUse": "Do not use if there is content to return."
+  },
+  {
+    "code": 301,
+    "name": "Moved Permanently",
+    "meaning": "The URL of the requested resource has been changed permanently.",
+    "whenToUse": "When a resource has been permanently moved to a new URL.",
+    "example": "Old URL /old-path redirects to /new-path with 301.",
+    "whenNotToUse": "Do not use for temporary moves; use 302 instead."
+  },
+  {
+    "code": 302,
+    "name": "Found",
+    "meaning": "The URI of requested resource has been changed temporarily.",
+    "whenToUse": "For temporary redirects.",
+    "example": "Resource temporarily at /temp-path, returns 302 to /current-path.",
+    "whenNotToUse": "Do not use for permanent moves; use 301 instead."
+  },
+  {
+    "code": 400,
+    "name": "Bad Request",
+    "meaning": "The server cannot or will not process the request due to a client error.",
+    "whenToUse": "When the request is malformed or invalid.",
+    "example": "POST with invalid JSON returns 400.",
+    "whenNotToUse": "Do not use for server errors; use 5xx codes."
+  },
+  {
+    "code": 401,
+    "name": "Unauthorized",
+    "meaning": "The client must authenticate itself to get the requested response.",
+    "whenToUse": "When authentication is required but not provided.",
+    "example": "Accessing protected resource without token returns 401.",
+    "whenNotToUse": "Do not use for forbidden access; use 403."
+  },
+  {
+    "code": 403,
+    "name": "Forbidden",
+    "meaning": "The client does not have access rights to the content.",
+    "whenToUse": "When the client is authenticated but not authorized.",
+    "example": "User tries to access admin resource without permissions returns 403.",
+    "whenNotToUse": "Do not use for unauthenticated requests; use 401."
+  },
+  {
+    "code": 404,
+    "name": "Not Found",
+    "meaning": "The server cannot find the requested resource.",
+    "whenToUse": "When the requested resource does not exist.",
+    "example": "GET /api/users/999 returns 404 if user does not exist.",
+    "whenNotToUse": "Do not use to hide resources; use 403 instead."
+  },
+  {
+    "code": 405,
+    "name": "Method Not Allowed",
+    "meaning": "The request method is known but not supported by the target resource.",
+    "whenToUse": "When the HTTP method is not allowed for the endpoint.",
+    "example": "DELETE on a read-only resource returns 405.",
+    "whenNotToUse": "Do not use for unknown methods; use 501."
+  },
+  {
+    "code": 409,
+    "name": "Conflict",
+    "meaning": "The request conflicts with the current state of the server.",
+    "whenToUse": "When there's a conflict, like duplicate resources.",
+    "example": "Creating a user with existing email returns 409.",
+    "whenNotToUse": "Do not use for general errors."
+  },
+  {
+    "code": 410,
+    "name": "Gone",
+    "meaning": "The requested content has been permanently deleted from server.",
+    "whenToUse": "When a resource is permanently removed.",
+    "example": "Accessing a deleted page returns 410.",
+    "whenNotToUse": "Do not use for temporary unavailability."
+  },
+  {
+    "code": 422,
+    "name": "Unprocessable Content",
+    "meaning": "The request was well-formed but unable to be followed due to semantic errors.",
+    "whenToUse": "When validation fails on well-formed data.",
+    "example": "POST with invalid data fields returns 422.",
+    "whenNotToUse": "Do not use for syntax errors; use 400."
+  },
+  {
+    "code": 429,
+    "name": "Too Many Requests",
+    "meaning": "The user has sent too many requests in a given amount of time.",
+    "whenToUse": "For rate limiting.",
+    "example": "API limits requests per minute, returns 429 on exceed.",
+    "whenNotToUse": "Do not use for other limits."
+  },
+  {
+    "code": 500,
+    "name": "Internal Server Error",
+    "meaning": "The server has encountered a situation it does not know how to handle.",
+    "whenToUse": "For unexpected server errors.",
+    "example": "Database connection fails, returns 500.",
+    "whenNotToUse": "Do not use for client errors."
+  },
+  {
+    "code": 501,
+    "name": "Not Implemented",
+    "meaning": "The request method is not supported by the server.",
+    "whenToUse": "When the server doesn't support the method.",
+    "example": "Unsupported HTTP method returns 501.",
+    "whenNotToUse": "Do not use for allowed but not implemented features."
+  },
+  {
+    "code": 502,
+    "name": "Bad Gateway",
+    "meaning": "The server got an invalid response from an upstream server.",
+    "whenToUse": "When proxying and upstream fails.",
+    "example": "API gateway receives invalid response from backend.",
+    "whenNotToUse": "Do not use for direct server errors."
+  },
+  {
+    "code": 503,
+    "name": "Service Unavailable",
+    "meaning": "The server is not ready to handle the request.",
+    "whenToUse": "During maintenance or overload.",
+    "example": "Server down for maintenance returns 503.",
+    "whenNotToUse": "Do not use for permanent issues."
+  },
+  {
+    "code": 504,
+    "name": "Gateway Timeout",
+    "meaning": "The server is acting as a gateway and cannot get a response in time.",
+    "whenToUse": "When upstream server times out.",
+    "example": "Proxy waits too long for backend response.",
+    "whenNotToUse": "Do not use for direct timeouts."
+  }
+]
