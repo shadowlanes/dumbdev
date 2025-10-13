@@ -2,7 +2,25 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'HTTP Codes Explainer',
-  description: 'Lookup and understand HTTP status codes instantly',
+  description: 'Comprehensive guide to HTTP status codes. Lookup and understand HTTP response codes with detailed explanations, usage examples, and best practices for web developers.',
+  lang: 'en-US',
+  
+  // SEO: Sitemap generation
+  sitemap: {
+    hostname: 'https://httpcodes.shadowlanes.com'
+  },
+  
+  // SEO: Head meta tags
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'canonical', href: 'https://httpcodes.shadowlanes.com' }],
+    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
+    ['meta', { name: 'description', content: 'Comprehensive guide to HTTP status codes. Lookup and understand HTTP response codes with detailed explanations, usage examples, and best practices for web developers.' }],
+    ['meta', { name: 'keywords', content: 'HTTP status codes, HTTP response codes, 404 error, 200 OK, 500 error, REST API, web development, HTTP reference' }],
+    ['meta', { name: 'author', content: 'shadowlanes' }],
+    ['meta', { name: 'robots', content: 'index, follow' }]
+  ],
+  
   themeConfig: {
     logo: '/logo.svg',
     nav: [
@@ -100,8 +118,5 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/shadowlanes/webdev/tree/main/apps/http-codes' }
     ]
-  },
-  head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }]
-  ]
+  }
 })

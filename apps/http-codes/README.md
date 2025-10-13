@@ -1,45 +1,90 @@
 # HTTP Codes Explainer
 
-A simple micro app for web developers to lookup and understand HTTP response codes.
+A comprehensive VitePress-powered web app for developers to lookup and understand HTTP response codes.
 
 ## Description
 
-This tool helps web developers quickly find information about HTTP status codes. It provides detailed explanations, categories, and search functionality for all standard HTTP response codes.
+This tool helps web developers quickly find information about HTTP status codes. It provides detailed explanations, categories, real-time search functionality, and individual pages for all standard HTTP response codes.
 
 ## Features
 
-- Lookup HTTP status codes by number
-- Detailed descriptions and meanings for each code
-- Search functionality to find codes by keyword
-- Organized by categories (1xx Informational, 2xx Success, etc.)
-- Copy code information to clipboard
+- 🔍 **Real-time Search** - Type an HTTP code and get instant results on the homepage
+- 📄 **Individual Pages** - Each code has its own SEO-optimized page (`/404`, `/200`, etc.)
+- 🎨 **Modern UI** - Professional dark theme with orange accents
+- 🚀 **Fast** - Static site generation for lightning-fast loads
+- 📱 **Responsive** - Works seamlessly on all devices
+- 🔗 **Share Links** - Copy direct links to any HTTP code
+- 🗂️ **Organized** - Sidebar navigation by category (1xx, 2xx, 3xx, 4xx, 5xx)
+- 🔎 **SEO Optimized** - Sitemap, meta tags, structured data, and canonical URLs
 
 ## Installation
 
-No installation required. Simply open `index.html` in a web browser.
-
-## Usage
-
-1. Open `index.html` in your web browser.
-2. Type an HTTP status code (e.g., 404) in the search field.
-3. The details for the code will appear instantly below.
-4. Alternatively, append `?code=XXX` to the URL to directly view a specific code (e.g., `index.html?code=404`).
-
-For server deployment with routing (e.g., to support URLs like `/404`), configure your server to serve `index.html` for all routes and handle the code via query parameters.
+```bash
+npm install
+```
 
 ## Development
 
-To run locally with a server:
-
+### Run dev server:
 ```bash
-python3 -m http.server 8000
+npm run docs:dev
 ```
 
-Then open `http://localhost:8000` in your browser.
+Then open `http://localhost:5173` in your browser.
 
-The app consists of:
-- `index.html`: Main HTML page with embedded CSS and JavaScript
-- `http-codes.json`: Data file containing HTTP status code information
+### Generate/Update pages:
+```bash
+npm run generate
+```
+
+Run this whenever you update `http-codes.json` to regenerate all individual code pages.
+
+### Build for production:
+```bash
+npm run docs:build
+```
+
+Output will be in `docs/.vitepress/dist/`
+
+### Preview production build:
+```bash
+npm run docs:preview
+```
+
+## Project Structure
+
+```
+http-codes/
+├── docs/                      # VitePress docs
+│   ├── .vitepress/
+│   │   ├── config.js         # VitePress configuration
+│   │   └── theme/            # Custom theme
+│   ├── public/               # Static assets
+│   │   ├── http-codes.json   # HTTP codes data
+│   │   └── robots.txt        # SEO robots file
+│   ├── index.md              # Homepage with search
+│   ├── codes.md              # All codes list
+│   └── [code].md             # Individual code pages (generated)
+├── generate-pages.js          # Script to generate pages from JSON
+├── http-codes.json            # Master data file
+└── package.json
+```
+
+## Deployment
+
+### Cloudflare Pages
+
+1. Push code to GitHub
+2. Connect repository to Cloudflare Pages
+3. Configure build settings:
+   - **Build command:** `npm run docs:build`
+   - **Build output directory:** `docs/.vitepress/dist`
+   - **Root directory:** `apps/http-codes` (if in monorepo)
+   - **Node version:** 18.x or 20.x
+
+### Other Platforms
+
+Build the site and deploy the `docs/.vitepress/dist` folder to any static hosting provider.
 
 ## License
 
