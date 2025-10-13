@@ -1,5 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Read the HTTP codes JSON
 const codesPath = path.join(__dirname, 'http-codes.json');
@@ -13,9 +17,31 @@ if (!fs.existsSync(docsDir)) {
 
 // Generate a page for each HTTP code
 codes.forEach(code => {
+  const rawDescription = `${code.code} ${code.name}: ${code.meaning}`.replace(/\s+/g, ' ').trim();
+  const description = rawDescription.length > 157 ? `${rawDescription.slice(0, 157)}...` : rawDescription;
+  const keywords = `HTTP ${code.code}, ${code.name}, HTTP status code, REST API, web development`;
+  const canonicalUrl = `https://httpcodes.shadowlanes.com/${code.code}`;
+
+  const frontmatterTitle = JSON.stringify(`${code.code} ${code.name} - HTTP Status Code Explained`);
+  const frontmatterDescription = JSON.stringify(description);
+  const headDescription = JSON.stringify(description);
+  const headKeywords = JSON.stringify(keywords);
+  const headCanonical = JSON.stringify(canonicalUrl);
+
   const content = `---
 layout: doc
-title: ${code.code} ${code.name}
+title: ${frontmatterTitle}
+description: ${frontmatterDescription}
+head:
+  - - meta
+    - name: description
+      content: ${headDescription}
+  - - meta
+    - name: keywords
+      content: ${headKeywords}
+  - - link
+    - rel: canonical
+      href: ${headCanonical}
 ---
 
 # ${code.code} ${code.name}
