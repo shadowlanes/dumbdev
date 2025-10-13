@@ -1,0 +1,162 @@
+# HTTP Codes Explainer
+
+> A comprehensive web application for looking up and understanding HTTP status codes
+
+## Overview
+
+HTTP Codes Explainer is a VitePress-powered static site that provides detailed information about HTTP response status codes. It features real-time search, individual pages for each code, and is optimized for both developers and search engines.
+
+## Technology Stack
+
+- **Framework**: VitePress (Vue-powered static site generator)
+- **Language**: JavaScript (ES Modules)
+- **Styling**: CSS (custom dark theme)
+- **Build Tool**: Vite
+- **Deployment**: Static HTML/CSS/JS
+
+## Project Structure
+
+```
+http-codes/
+├── docs/                          # VitePress documentation root
+│   ├── .vitepress/
+│   │   ├── config.js             # Site configuration, SEO, sitemap
+│   │   └── theme/
+│   │       ├── index.js          # Custom theme entry
+│   │       └── custom.css        # Dark theme styles
+│   ├── public/
+│   │   ├── http-codes.json       # Master data file (85 codes)
+│   │   └── robots.txt            # SEO robots configuration
+│   ├── index.md                  # Homepage with search functionality
+│   ├── codes.md                  # List of all codes by category
+│   └── [code].md                 # Generated pages (100.md, 404.md, etc.)
+├── generate-pages.js              # Script to generate individual code pages
+├── http-codes.json                # Source data for all HTTP codes
+├── index.html                     # Legacy single-page version
+└── package.json
+```
+
+## Key Features
+
+### 1. Real-time Search Homepage
+- Type HTTP code, get instant results
+- No search button needed - updates as you type
+- Displays: meaning, when to use, example, when not to use, source
+- Share button with copy-to-clipboard functionality
+
+### 2. Individual Code Pages
+- Each HTTP code has its own route (e.g., `/404`, `/200`, `/500`)
+- SEO-optimized with unique meta tags and descriptions
+- Schema.org structured data (TechArticle type)
+- Canonical URLs for each page
+
+### 3. SEO Optimization
+- Automatic sitemap generation
+- Meta tags: description, keywords, robots, author
+- JSON-LD structured data on every page
+- robots.txt for crawler instructions
+- Canonical URLs to prevent duplicate content
+
+### 4. Dark Theme Design
+- Professional black background (#000000)
+- Orange accent color (#ff6b35)
+- Minimalistic, developer-friendly interface
+- Responsive design
+
+## Data Structure
+
+Each HTTP code in `http-codes.json` contains:
+```json
+{
+  "code": 404,
+  "name": "Not Found",
+  "meaning": "The server cannot find the requested resource...",
+  "whenToUse": "When the requested resource does not exist...",
+  "example": "GET /api/users/999 returns 404 if user does not exist.",
+  "whenNotToUse": "Do not use to hide resources; use 403 instead.",
+  "source": "RFC 9110"
+}
+```
+
+## Build Process
+
+1. **Development**: `npm run docs:dev` - Starts dev server on port 5173
+2. **Generate Pages**: `npm run generate` - Regenerates all code pages from JSON
+3. **Build**: `npm run docs:build` - Generates static site in `docs/.vitepress/dist/`
+4. **Preview**: `npm run docs:preview` - Preview production build locally
+
+## Code Generation
+
+The `generate-pages.js` script:
+- Reads `http-codes.json`
+- Creates individual markdown files for each code
+- Adds SEO frontmatter (title, description, keywords, canonical URL)
+- Injects JSON-LD structured data
+- Generates `codes.md` with categorized links
+
+## Deployment
+
+**Cloudflare Pages Configuration:**
+- Build command: `npm run docs:build`
+- Build output: `docs/.vitepress/dist`
+- Node version: 18.x or 20.x
+- Root directory: `apps/http-codes` (if monorepo)
+
+**Output:**
+- Fully static site (HTML/CSS/JS)
+- No server-side rendering required
+- CDN-friendly
+- ~85 pages (one per HTTP code + homepage + codes list)
+
+## API/Integration
+
+No API endpoints. All data is:
+- Embedded in static HTML during build
+- Loaded from `http-codes.json` via client-side fetch on homepage
+- Pre-rendered for individual code pages
+
+## SEO Features
+
+1. **Sitemap**: Auto-generated at `/sitemap.xml`
+2. **Canonical URLs**: `https://httpcodes.shadowlanes.com/[code]`
+3. **Meta Tags**: Per-page descriptions, keywords
+4. **Structured Data**: Schema.org TechArticle markup
+5. **robots.txt**: Allows all crawlers, points to sitemap
+
+## Performance
+
+- Static site = instant loading
+- No backend/database
+- Minimal JavaScript
+- Vue 3 for reactive search on homepage
+- Pre-rendered pages for optimal First Contentful Paint
+
+## Maintenance
+
+To add/update HTTP codes:
+1. Edit `http-codes.json`
+2. Run `npm run generate` to regenerate pages
+3. Commit and push to trigger deployment
+
+## Dependencies
+
+```json
+{
+  "vitepress": "^1.6.4",
+  "vue": "^3.x"
+}
+```
+
+## Browser Support
+
+- Modern browsers (ES6+)
+- Progressive enhancement
+- No IE11 support
+
+## License
+
+MIT License - See LICENSE file
+
+---
+
+This documentation is designed for LLMs to understand the project structure, technology choices, and how to work with the codebase.
