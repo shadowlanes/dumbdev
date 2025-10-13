@@ -9,6 +9,7 @@ import { useData } from 'vitepress'
 const searchCode = ref('')
 const codeData = ref(null)
 const notFound = ref(false)
+const shareCopied = ref(false)
 
 // Load the HTTP codes data
 const loadCodeData = async (code) => {
@@ -40,6 +41,19 @@ const loadCodeData = async (code) => {
 watch(searchCode, (newValue) => {
   loadCodeData(newValue)
 })
+
+// Share functionality
+const shareURL = () => {
+  const url = `${window.location.origin}/${searchCode.value}`
+  navigator.clipboard.writeText(url).then(() => {
+    shareCopied.value = true
+    setTimeout(() => {
+      shareCopied.value = false
+    }, 2000)
+  }).catch(err => {
+    console.error('Failed to copy: ', err)
+  })
+}
 </script>
 
 <style scoped>
@@ -124,6 +138,37 @@ watch(searchCode, (newValue) => {
   font-weight: 600;
   color: #ff6b35;
   margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.share-icon {
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+  background-color: #333333;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-icon:hover {
+  background-color: #ff6b35;
+  transform: scale(1.1);
+}
+
+.share-icon.copied {
+  background-color: #22c55e;
+}
+
+.share-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: #ffffff;
 }
 
 .section {
@@ -153,23 +198,7 @@ watch(searchCode, (newValue) => {
   padding: 30px;
 }
 
-.share-btn {
-  margin-top: 25px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #ff6b35, #f7931e);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
 
-.share-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
-}
 </style>
 
 <div class="main-container">
@@ -197,7 +226,14 @@ watch(searchCode, (newValue) => {
   </div>
 
   <div v-if="codeData" class="results-container">
-    <div class="code-title">{{ codeData.code }} {{ codeData.name }}</div>
+    <div class="code-title">
+      <span>{{ codeData.code }} {{ codeData.name }}</span>
+      <div class="share-icon" :class="{ copied: shareCopied }" @click="shareURL">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+        </svg>
+      </div>
+    </div>
     <div class="section">
       <h3>Meaning</h3>
       <p>{{ codeData.meaning }}</p>
@@ -218,7 +254,6 @@ watch(searchCode, (newValue) => {
       <h3>Source</h3>
       <p>{{ codeData.source }}</p>
     </div>
-    <button class="share-btn" @click="shareURL">Share</button>
   </div>
 
   <div v-if="notFound" class="results-container">
@@ -228,17 +263,4 @@ watch(searchCode, (newValue) => {
   </div>
 </div>
 
-<script>
-export default {
-  methods: {
-    shareURL() {
-      const url = `${window.location.origin}/${this.searchCode}`
-      navigator.clipboard.writeText(url).then(() => {
-        alert('URL copied to clipboard!')
-      }).catch(err => {
-        console.error('Failed to copy: ', err)
-      })
-    }
-  }
-}
-</script>
+
