@@ -17,42 +17,32 @@ if (!fs.existsSync(docsDir)) {
 
 // Generate a page for each HTTP code
 codes.forEach(code => {
-  // Create SEO-friendly description (max 160 chars)
-  const description = `${code.code} ${code.name}: ${code.meaning.substring(0, 140)}...`;
-  
+  const rawDescription = `${code.code} ${code.name}: ${code.meaning}`.replace(/\s+/g, ' ').trim();
+  const description = rawDescription.length > 157 ? `${rawDescription.slice(0, 157)}...` : rawDescription;
+  const keywords = `HTTP ${code.code}, ${code.name}, HTTP status code, REST API, web development`;
+  const canonicalUrl = `https://httpcodes.shadowlanes.com/${code.code}`;
+
+  const frontmatterTitle = JSON.stringify(`${code.code} ${code.name} - HTTP Status Code Explained`);
+  const frontmatterDescription = JSON.stringify(description);
+  const headDescription = JSON.stringify(description);
+  const headKeywords = JSON.stringify(keywords);
+  const headCanonical = JSON.stringify(canonicalUrl);
+
   const content = `---
 layout: doc
-title: ${code.code} ${code.name} - HTTP Status Code Explained
-description: ${description}
+title: ${frontmatterTitle}
+description: ${frontmatterDescription}
 head:
   - - meta
     - name: description
-      content: ${description}
+      content: ${headDescription}
   - - meta
     - name: keywords
-      content: HTTP ${code.code}, ${code.name}, HTTP status code, REST API, web development
+      content: ${headKeywords}
   - - link
     - rel: canonical
-      href: https://httpcodes.shadowlanes.com/${code.code}
+      href: ${headCanonical}
 ---
-
-<script setup>
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": "${code.code} ${code.name} - HTTP Status Code",
-  "description": "${code.meaning}",
-  "url": "https://httpcodes.shadowlanes.com/${code.code}",
-  "keywords": "HTTP ${code.code}, ${code.name}, HTTP status code",
-  "articleBody": "${code.meaning} ${code.whenToUse}",
-  "publisher": {
-    "@type": "Organization",
-    "name": "HTTP Codes Explainer"
-  }
-}
-</script>
-
-<script type="application/ld+json" v-html="JSON.stringify(structuredData)"></script>
 
 # ${code.code} ${code.name}
 
