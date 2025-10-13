@@ -85,12 +85,12 @@ const shareURL = () => {
 .title {
   font-size: 2.5em;
   font-weight: 300;
-  color: #ffffff;
+  color: var(--vp-c-text-1);
   margin: 0;
 }
 
 .tagline {
-  color: #cccccc;
+  color: var(--vp-c-text-2);
   font-size: 1.1em;
   margin-top: 10px;
   font-weight: 300;
@@ -105,10 +105,10 @@ const shareURL = () => {
   width: 100%;
   padding: 20px 25px;
   font-size: 24px;
-  border: 2px solid #333333;
+  border: 2px solid var(--vp-c-divider);
   border-radius: 12px;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background-color: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
   box-sizing: border-box;
   outline: none;
   transition: border-color 0.3s ease;
@@ -120,17 +120,17 @@ const shareURL = () => {
 }
 
 .search-input::placeholder {
-  color: #666666;
+  color: var(--vp-c-text-3);
 }
 
 .results-container {
   max-width: 700px;
   margin: 0 auto;
   padding: 30px;
-  background-color: #1a1a1a;
+  background-color: var(--vp-c-bg-soft);
   border-radius: 12px;
-  border: 1px solid #333333;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--vp-c-divider);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .code-title {
@@ -149,7 +149,7 @@ const shareURL = () => {
   padding: 8px;
   cursor: pointer;
   border-radius: 8px;
-  background-color: #333333;
+  background-color: var(--vp-c-bg-mute);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -168,7 +168,7 @@ const shareURL = () => {
 .share-icon svg {
   width: 20px;
   height: 20px;
-  fill: #ffffff;
+  fill: var(--vp-c-text-1);
 }
 
 .section {
@@ -177,7 +177,7 @@ const shareURL = () => {
 
 .section h3 {
   margin-bottom: 10px;
-  color: #cccccc;
+  color: var(--vp-c-text-2);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -186,14 +186,14 @@ const shareURL = () => {
 
 .section p {
   margin: 0;
-  color: #ffffff;
+  color: var(--vp-c-text-1);
   font-size: 16px;
   line-height: 1.6;
 }
 
 .not-found {
   text-align: center;
-  color: #999999;
+  color: var(--vp-c-text-3);
   font-size: 16px;
   padding: 30px;
 }

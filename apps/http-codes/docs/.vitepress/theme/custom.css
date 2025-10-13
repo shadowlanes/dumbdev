@@ -1,10 +1,25 @@
 :root {
+  /* Brand colors - same for both themes */
   --vp-c-brand: #ff6b35;
   --vp-c-brand-light: #f7931e;
   --vp-c-brand-lighter: #ffa954;
   --vp-c-brand-dark: #e55a24;
   --vp-c-brand-darker: #cc4e1d;
+}
+
+/* Light mode (default) */
+:root {
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-soft: #f5f5f5;
+  --vp-c-bg-mute: #f0f0f0;
   
+  --vp-c-text-1: #1a1a1a;
+  --vp-c-text-2: #333333;
+  --vp-c-text-3: #666666;
+}
+
+/* Dark mode */
+.dark {
   --vp-c-bg: #000000;
   --vp-c-bg-soft: #1a1a1a;
   --vp-c-bg-mute: #0d0d0d;
@@ -14,33 +29,53 @@
   --vp-c-text-3: #999999;
 }
 
-.dark {
-  --vp-c-bg: #000000;
-  --vp-c-bg-soft: #1a1a1a;
-  --vp-c-bg-mute: #0d0d0d;
-}
-
-body {
+/* Dark mode specific styles */
+.dark body {
   background-color: #000000;
   color: #ffffff;
 }
 
-.VPNav {
-  background-color: #000000 !important;
-  border-bottom: 1px solid #333333 !important;
+.dark .VPNav {
+  background-color: #000000;
+  border-bottom: 1px solid #333333;
 }
 
-.VPSidebar {
-  background-color: #000000 !important;
+.dark .VPSidebar {
+  background-color: #000000;
 }
 
-.VPContent {
-  background-color: #000000 !important;
+.dark .VPContent {
+  background-color: #000000;
 }
 
-.vp-doc {
-  background-color: #1a1a1a !important;
+.dark .vp-doc {
+  background-color: #1a1a1a;
   border: 1px solid #333333;
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.dark .vp-doc h1 {
+  color: #ff6b35;
+  font-weight: 600;
+}
+
+.dark .vp-doc h2 {
+  color: #cccccc;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-weight: 500;
+  border-top: none;
+}
+
+.dark .vp-doc p {
+  color: #ffffff;
+  font-size: 16px;
+}
+
+/* Light mode specific styles */
+.vp-doc {
   border-radius: 12px;
   padding: 30px;
 }
@@ -51,7 +86,6 @@ body {
 }
 
 .vp-doc h2 {
-  color: #cccccc;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-size: 14px;
@@ -60,7 +94,6 @@ body {
 }
 
 .vp-doc p {
-  color: #ffffff;
   font-size: 16px;
 }
 

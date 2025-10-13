@@ -21,6 +21,9 @@ export default defineConfig({
     ['meta', { name: 'robots', content: 'index, follow' }]
   ],
   
+  // Appearance toggle for light/dark mode
+  appearance: true,
+  
   themeConfig: {
     logo: '/logo.svg',
     nav: [
