@@ -15,6 +15,127 @@ This repository is organized as a monorepo where each project is a separate inde
 
 Browse the `apps/` directory to see all available micro apps. Each app has its own README with detailed information about its purpose, installation, and usage.
 
+
+## 🛠️ Tech Stack
+
+- **Framework**: [VitePress](https://vitepress.dev/) - Static site generator powered by Vite and Vue
+- **Theme**: Custom Tailwind-inspired theme with HSL color system
+- **Styling**: Modern CSS with custom properties, supporting light/dark modes
+- **Libraries**: Vibrant.js for color extraction
+
+## 📖 Getting Started
+
+### Prerequisites
+
+- Node.js 18.x or higher
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/webdev.git
+cd webdev
+
+# Install dependencies
+pnpm install
+```
+
+### Development
+
+```bash
+# Start the development server
+pnpm run docs:dev
+
+# The site will be available at http://localhost:5173
+```
+
+### Build for Production
+
+```bash
+# Build the site
+pnpm run docs:build
+
+# Preview the production build
+pnpm run docs:preview
+```
+
+### Generate HTTP Codes Pages
+
+If you've updated the HTTP codes data, regenerate the pages:
+
+```bash
+pnpm run generate:http-codes
+```
+
+## 📁 Project Structure
+
+```
+webdev/
+├── docs/                          # VitePress documentation root
+│   ├── .vitepress/
+│   │   ├── config.ts             # VitePress configuration
+│   │   ├── theme/                # Custom theme
+│   │   │   ├── index.ts
+│   │   │   └── styles/           # Theme styles (vars, base, utilities)
+│   │   └── public/               # Static assets
+│   ├── index.md                  # Landing page
+│   ├── http-codes/               # HTTP codes app
+│   │   ├── index.md             # Search interface
+│   │   ├── codes.md             # All codes list
+│   │   └── [code].md            # Individual code pages
+│   ├── color-palette-extractor/  # Color extractor app
+│   │   └── index.md
+│   └── color-palette-generator/  # Color generator app (placeholder)
+│       └── index.md
+├── scripts/                       # Build and generation scripts
+│   └── generate-http-codes.js
+├── apps/                          # Original app source code
+│   ├── http-codes/
+│   ├── color-palette-extractor/
+│   └── color-palette-generator/
+└── package.json                   # Root dependencies
+```
+
+## 🎨 Theme Customization
+
+The theme is built with customization in mind. All colors, spacing, and typography are defined as CSS custom properties in `docs/.vitepress/theme/styles/vars.css`.
+
+### Color System
+
+The theme uses an HSL-based color system similar to shadcn/ui:
+
+- `--primary`: Main brand color
+- `--secondary`: Secondary color
+- `--muted`: Muted backgrounds and text
+- `--accent`: Accent color for highlights
+- `--border`: Border color
+- And more...
+
+Both light and dark modes are fully supported.
+
+### Customizing Colors
+
+Edit `docs/.vitepress/theme/styles/vars.css` to change the color scheme:
+
+```css
+:root {
+  --primary: 217 91% 60%;  /* HSL values */
+  /* ... other colors */
+}
+```
+
+## 🚀 Deployment
+
+### Cloudflare Pages
+
+1. Connect your GitHub repository to Cloudflare Pages
+2. Configure build settings:
+   - **Build command**: `npm run docs:build`
+   - **Build output directory**: `docs/.vitepress/dist`
+   - **Node version**: 18.x or 20.x
+
+
 ## Contributing
 
 Each app can be developed independently. Navigate to the specific app directory to work on it. See the individual app README for development instructions.

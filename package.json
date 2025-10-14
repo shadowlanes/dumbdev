@@ -1,0 +1,25 @@
+{
+  "name": "webdev-tools",
+  "version": "1.0.0",
+  "description": "A collection of independent micro apps for web developers",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "generate:http-codes": "node scripts/generate-http-codes.js"
+  },
+  "keywords": [
+    "web-development",
+    "tools",
+    "utilities"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.22",
+    "typescript": "^5.7.3"
+  }
+}
+
