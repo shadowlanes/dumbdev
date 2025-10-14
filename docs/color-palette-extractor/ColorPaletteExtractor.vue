@@ -300,17 +300,7 @@ function showToast(message: string) {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, #10b981, #06b6d4, #14b8a6, #3b82f6, #10b981);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 8s ease infinite;
-}
-
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  color: var(--vp-c-text-1);
 }
 
 .extractor-header p {
@@ -321,14 +311,9 @@ function showToast(message: string) {
 .card {
   background: var(--vp-c-bg-soft);
   border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: var(--vp-shadow-1);
   transition: all 0.3s ease;
-}
-
-.card:hover {
-  box-shadow: var(--vp-shadow-2);
 }
 
 .upload-controls-wrapper {
@@ -479,9 +464,10 @@ function showToast(message: string) {
 
 .slider {
   width: 100%;
-  height: 8px;
-  border-radius: 5px;
-  background: var(--vp-c-bg-alt);
+  height: 6px;
+  border-radius: 3px;
+  background: var(--vp-c-default-soft);
+  border: 1px solid var(--vp-c-divider);
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -490,10 +476,12 @@ function showToast(message: string) {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--vp-c-brand-1);
+  border: 2px solid var(--vp-c-bg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -504,12 +492,13 @@ function showToast(message: string) {
 }
 
 .slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--vp-c-brand-1);
+  border: 2px solid var(--vp-c-bg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  border: none;
   transition: all 0.2s ease;
 }
 
@@ -541,8 +530,6 @@ function showToast(message: string) {
 
 .btn-primary:hover:not(:disabled) {
   background: var(--vp-c-brand-2);
-  transform: translateY(-1px);
-  box-shadow: var(--vp-shadow-2);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -626,16 +613,15 @@ function showToast(message: string) {
   background: var(--vp-c-bg-soft);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: var(--vp-shadow-2);
   transition: all 0.3s ease;
   position: relative;
   border: 1px solid var(--vp-c-divider);
 }
 
 .color-item:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--vp-shadow-3);
+  transform: translateY(-2px);
   border-color: var(--vp-c-brand-1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .color-swatch {
@@ -732,7 +718,7 @@ function showToast(message: string) {
   color: var(--vp-button-brand-text);
   padding: 1rem 1.5rem;
   border-radius: 8px;
-  box-shadow: var(--vp-shadow-3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   font-weight: 500;
 }

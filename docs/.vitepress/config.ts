@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { getNavItems, getAppsDirectorySidebar } from './apps'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -17,9 +18,10 @@ export default defineConfig({
     
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'HTTP Codes', link: '/http-codes/' },
-      { text: 'Color Palette Extractor', link: '/color-palette-extractor/' },
-      { text: 'Color Palette Generator', link: '/color-palette-generator/' }
+      { 
+        text: 'Apps', 
+        items: getNavItems()
+      }
     ],
 
     sidebar: {
@@ -152,7 +154,11 @@ export default defineConfig({
             { text: '999 Request Denied', link: '/http-codes/999' }
           ]
         }
-      ]
+      ],
+      
+      // Apps Directory sidebar for apps without internal navigation
+      '/color-palette-extractor/': getAppsDirectorySidebar(),
+      '/color-palette-generator/': getAppsDirectorySidebar()
     },
 
     socialLinks: [
