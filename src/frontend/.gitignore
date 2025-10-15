@@ -66,8 +66,8 @@ coverage/
 .nyc_output/
 htmlcov/
 # VitePress
-docs/.vitepress/cache
-docs/.vitepress/dist
+apps/.vitepress/cache
+apps/.vitepress/dist
 .temp
 .cache
 
