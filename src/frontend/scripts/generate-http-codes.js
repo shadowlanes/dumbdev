@@ -6,11 +6,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Read the HTTP codes JSON from public directory
-const codesPath = path.join(__dirname, '../docs/public/http-codes.json');
+const codesPath = path.join(__dirname, '../apps/public/http-codes.json');
 const codes = JSON.parse(fs.readFileSync(codesPath, 'utf-8'));
 
 // Create http-codes directory if it doesn't exist
-const httpCodesDir = path.join(__dirname, '../docs/http-codes');
+const httpCodesDir = path.join(__dirname, '../apps/http-codes');
 if (!fs.existsSync(httpCodesDir)) {
   fs.mkdirSync(httpCodesDir, { recursive: true });
 }
