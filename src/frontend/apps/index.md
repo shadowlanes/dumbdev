@@ -44,6 +44,12 @@ features:
     link: /color-palette-extractor/
     linkText: Try Color Extractor
 
+  - icon: 🖼️
+    title: Favicon Builder
+    details: Generate complete favicon sets from PNG or JPEG images entirely in your browser. No server required.
+    link: /favicon-builder/
+    linkText: Build Favicons
+
   - icon: 🌈
     title: Color Palette Generator
     details: Generate harmonious color palettes based on color theory principles. Perfect for design projects.

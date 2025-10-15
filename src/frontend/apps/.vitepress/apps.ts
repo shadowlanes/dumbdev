@@ -62,6 +62,16 @@ export const apps: App[] = [
     category: 'color-tools',
     status: 'coming-soon',
     hasInternalNav: false
+  },
+  {
+    id: 'favicon-builder',
+    name: 'Favicon Builder',
+    icon: '🖼️',
+    description: 'Generate complete favicon sets from PNG or JPEG images entirely in your browser',
+    link: '/favicon-builder/',
+    category: 'development-utils',
+    status: 'active',
+    hasInternalNav: false
   }
 ]
 
