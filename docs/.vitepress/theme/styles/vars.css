@@ -1,0 +1,63 @@
+/**
+ * Customize default theme styling by overriding CSS variables:
+ * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
+ */
+
+/**
+ * Colors - Brand Override
+ * -------------------------------------------------------------------------- */
+
+:root {
+  /* Brand colors - Orange/Coral primary */
+  --vp-c-brand-1: #ffa954;
+  --vp-c-brand-2: #ff6b35;
+  --vp-c-brand-3: #e55a24;
+  --vp-c-brand-soft: rgba(255, 107, 53, 0.14);
+  
+  /* Additional brand shades */
+  --vp-c-brand: #ff6b35;
+  --vp-c-brand-light: #f7931e;
+  --vp-c-brand-lighter: #ffa954;
+  --vp-c-brand-dark: #e55a24;
+  --vp-c-brand-darker: #cc4e1d;
+}
+
+.dark {
+  --vp-c-brand-1: #ffa954;
+  --vp-c-brand-2: #ff6b35;
+  --vp-c-brand-3: #e55a24;
+  --vp-c-brand-soft: rgba(255, 107, 53, 0.16);
+}
+
+/**
+ * Component: Button
+ * -------------------------------------------------------------------------- */
+
+:root {
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--vp-c-white);
+  --vp-button-brand-bg: var(--vp-c-brand-3);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: var(--vp-c-white);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: var(--vp-c-white);
+  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+}
+
+/**
+ * Custom styles for hero logo with static glow
+ * -------------------------------------------------------------------------- */
+
+.VPImage.image-src {
+  filter: drop-shadow(0 0 20px #ff6b3559) 
+          drop-shadow(0 0 30px #ffa95489)
+          drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12));
+}
+
+.dark .VPImage.image-src {
+  filter: drop-shadow(0 0 30px #ff6b3576) 
+          drop-shadow(0 0 45px #ffa954b1)
+          drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6))
+          drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
