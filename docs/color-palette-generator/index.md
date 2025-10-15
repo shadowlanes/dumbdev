@@ -2,6 +2,23 @@
 layout: doc
 title: Color Palette Generator
 description: Generate harmonious color palettes based on color theory principles
+
+head:
+  - - link
+    - rel: canonical
+      href: https://webdev.shadowlanes.com/color-palette-generator/
+  - - script
+    - type: application/ld+json
+    children: |
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Color Palette Generator",
+        "description": "Generate harmonious color palettes based on color theory principles",
+        "url": "https://webdev.shadowlanes.com/color-palette-generator/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser"
+      }
 ---
 
 # Color Palette Generator
