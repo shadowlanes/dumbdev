@@ -1,24 +1,5 @@
 ---
 layout: home
-
-title: "Web Developer Tools"
-description: "A collection of independent micro apps for web developers"
-
-head:
-  - - link
-    - rel: canonical
-      href: https://webdev.shadowlanes.com/
-  - - script
-    - type: application/ld+json
-    children: |
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Web Developer Tools",
-        "description": "A collection of independent micro apps for web developers",
-        "url": "https://webdev.shadowlanes.com"
-      }
-
 hero:
   name: "Web Developer Tools"
   text: "Powerful micro apps for developers"
@@ -40,13 +21,13 @@ features:
     details: Quickly lookup and understand HTTP status codes with real-time search and detailed explanations for all standard codes.
     link: /http-codes/
     linkText: Explore HTTP Codes
-  
+
   - icon: 🎨
     title: Color Palette Extractor
     details: Extract beautiful color palettes from images using Vibrant.js. Upload, extract, and export colors with ease.
     link: /color-palette-extractor/
     linkText: Try Color Extractor
-  
+
   - icon: 🌈
     title: Color Palette Generator
     details: Generate harmonious color palettes based on color theory principles. Perfect for design projects.
@@ -62,13 +43,13 @@ features:
     <h3 class="vp-feature-title">Fast & Lightweight</h3>
     <p class="vp-feature-details">Built with performance in mind. No unnecessary dependencies or bloat.</p>
   </div>
-  
+
   <div class="vp-feature">
     <div class="vp-feature-icon">🎯</div>
     <h3 class="vp-feature-title">Purpose-Built</h3>
     <p class="vp-feature-details">Each app focuses on doing one thing exceptionally well.</p>
   </div>
-  
+
   <div class="vp-feature">
     <div class="vp-feature-icon">🚀</div>
     <h3 class="vp-feature-title">Easy to Use</h3>
@@ -126,4 +107,3 @@ features:
   }
 }
 </style>
-

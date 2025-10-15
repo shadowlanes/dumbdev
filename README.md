@@ -44,6 +44,9 @@ pnpm install
 ### Development
 
 ```bash
+# Navigate to frontend directory
+cd src/frontend
+
 # Start the development server
 pnpm run docs:dev
 
@@ -53,6 +56,9 @@ pnpm run docs:dev
 ### Build for Production
 
 ```bash
+# Navigate to frontend directory
+cd src/frontend
+
 # Build the site
 pnpm run docs:build
 
@@ -65,6 +71,7 @@ pnpm run docs:preview
 If you've updated the HTTP codes data, regenerate the pages:
 
 ```bash
+cd src/frontend
 pnpm run generate:http-codes
 ```
 
@@ -72,29 +79,24 @@ pnpm run generate:http-codes
 
 ```
 webdev/
-├── docs/                          # VitePress documentation root
-│   ├── .vitepress/
-│   │   ├── config.ts             # VitePress configuration
-│   │   ├── theme/                # Custom theme
-│   │   │   ├── index.ts
-│   │   │   └── styles/           # Theme styles (vars, base, utilities)
-│   │   └── public/               # Static assets
-│   ├── index.md                  # Landing page
-│   ├── http-codes/               # HTTP codes app
-│   │   ├── index.md             # Search interface
-│   │   ├── codes.md             # All codes list
-│   │   └── [code].md            # Individual code pages
-│   ├── color-palette-extractor/  # Color extractor app
-│   │   └── index.md
-│   └── color-palette-generator/  # Color generator app (placeholder)
-│       └── index.md
-├── scripts/                       # Build and generation scripts
-│   └── generate-http-codes.js
-├── apps/                          # Original app source code
-│   ├── http-codes/
-│   ├── color-palette-extractor/
-│   └── color-palette-generator/
-└── package.json                   # Root dependencies
+├── src/
+│   ├── frontend/                 # VitePress frontend application
+│   │   ├── apps/                 # VitePress documentation root
+│   │   │   ├── .vitepress/
+│   │   │   │   ├── config.ts     # VitePress configuration
+│   │   │   │   ├── theme/        # Custom theme
+│   │   │   │   └── public/       # Static assets
+│   │   │   ├── index.md          # Landing page
+│   │   │   ├── http-codes/       # HTTP codes app
+│   │   │   ├── color-palette-extractor/  # Color extractor app
+│   │   │   └── color-palette-generator/  # Color generator app
+│   │   ├── scripts/              # Build and generation scripts
+│   │   └── package.json          # Frontend dependencies
+│   └── backend/                  # Backend application (future)
+├── CONTRIBUTING.md
+├── LICENSE
+├── MIGRATION.md
+└── README.md
 ```
 
 ## 🎨 Theme Customization
@@ -131,8 +133,8 @@ Edit `docs/.vitepress/theme/styles/vars.css` to change the color scheme:
 
 1. Connect your GitHub repository to Cloudflare Pages
 2. Configure build settings:
-   - **Build command**: `npm run docs:build`
-   - **Build output directory**: `docs/.vitepress/dist`
+   - **Build command**: `cd src/frontend && npm run docs:build`
+   - **Build output directory**: `src/frontend/apps/.vitepress/dist`
    - **Node version**: 18.x or 20.x
 
 
