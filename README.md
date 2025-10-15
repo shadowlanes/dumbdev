@@ -48,7 +48,7 @@ pnpm install
 cd src/frontend
 
 # Start the development server
-pnpm run docs:dev
+pnpm run dev
 
 # The site will be available at http://localhost:5173
 ```
@@ -60,10 +60,10 @@ pnpm run docs:dev
 cd src/frontend
 
 # Build the site
-pnpm run docs:build
+pnpm run build
 
 # Preview the production build
-pnpm run docs:preview
+pnpm run preview
 ```
 
 ### Generate HTTP Codes Pages
@@ -101,7 +101,7 @@ webdev/
 
 ## 🎨 Theme Customization
 
-The theme is built with customization in mind. All colors, spacing, and typography are defined as CSS custom properties in `docs/.vitepress/theme/styles/vars.css`.
+The theme is built with customization in mind. All colors, spacing, and typography are defined as CSS custom properties in `apps/.vitepress/theme/styles/vars.css`.
 
 ### Color System
 
@@ -118,7 +118,7 @@ Both light and dark modes are fully supported.
 
 ### Customizing Colors
 
-Edit `docs/.vitepress/theme/styles/vars.css` to change the color scheme:
+Edit `apps/.vitepress/theme/styles/vars.css` to change the color scheme:
 
 ```css
 :root {
@@ -133,7 +133,7 @@ Edit `docs/.vitepress/theme/styles/vars.css` to change the color scheme:
 
 1. Connect your GitHub repository to Cloudflare Pages
 2. Configure build settings:
-   - **Build command**: `cd src/frontend && npm run docs:build`
+   - **Build command**: `cd src/frontend && pnpm run build`
    - **Build output directory**: `src/frontend/apps/.vitepress/dist`
    - **Node version**: 18.x or 20.x
 
