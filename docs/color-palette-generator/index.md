@@ -29,7 +29,7 @@ This tool helps web developers and designers quickly generate harmonious color p
 
 ## Contributing
 
-Want to help build this tool? Check out our [Contributing Guide](https://github.com/yourusername/webdev/blob/main/CONTRIBUTING.md) to get started.
+Want to help build this tool? Check out our [Contributing Guide](https://github.com/shadowlanes/webdev/blob/main/CONTRIBUTING.md) to get started.
 
 ## Current Status
 

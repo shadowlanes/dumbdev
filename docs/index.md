@@ -14,7 +14,7 @@ hero:
       link: /http-codes/
     - theme: alt
       text: View on GitHub
-      link: https://github.com/yourusername/webdev
+      link: https://github.com/shadowlanes/webdev
 
 features:
   - icon: 🔍
