@@ -1,5 +1,21 @@
 ---
 layout: home
+title: "Web Developer Tools"
+description: "A collection of independent micro apps for web developers"
+head:
+  - - link
+    - rel: canonical
+      href: https://webdev.shadowlanes.com/
+  - - script
+    - type: application/ld+json
+      children: |
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Web Developer Tools",
+          "description": "A collection of independent micro apps for web developers",
+          "url": "https://webdev.shadowlanes.com"
+        }
 hero:
   name: "Web Developer Tools"
   text: "Powerful micro apps for developers"

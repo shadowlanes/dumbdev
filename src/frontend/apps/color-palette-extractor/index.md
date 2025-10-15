@@ -3,8 +3,24 @@ layout: page
 title: Color Palette Extractor
 description: Extract beautiful color palettes from images using Vibrant.js
 head:
-    - - script
+  - - link
+    - rel: canonical
+      href: https://webdev.shadowlanes.com/color-palette-extractor/
+  - - script
+    - type: application/ld+json
+      children: |
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "Color Palette Extractor",
+          "description": "Extract beautiful color palettes from images using Vibrant.js",
+          "url": "https://webdev.shadowlanes.com/color-palette-extractor/",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser"
+        }
+  - - script
     - src: /vibrant.min.js
+      defer: true
 ---
 
 <script setup>
