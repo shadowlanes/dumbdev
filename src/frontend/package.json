@@ -4,10 +4,10 @@
   "description": "A collection of independent micro apps for web developers",
   "type": "module",
   "scripts": {
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "generate:http-codes": "node scripts/generate-http-codes.js"
+    "dev": "vitepress dev apps",
+    "build": "vitepress build apps",
+    "preview": "vitepress preview apps",
+    "app:http-codes:generate": "node scripts/generate-http-codes.js"
   },
   "keywords": [
     "web-development",
