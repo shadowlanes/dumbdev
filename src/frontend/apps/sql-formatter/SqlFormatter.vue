@@ -7,12 +7,19 @@
 
     <div class="formatter-controls">
       <div class="control-group">
-        <label class="control-label">SQL Dialect</label>
-        <select v-model="selectedDialect" class="dialect-select">
-          <option value="mysql">MySQL</option>
-          <option value="postgresql">PostgreSQL</option>
-          <option value="sql">SQL Server</option>
-        </select>
+        <div class="dialect-toggle" role="radiogroup" aria-label="SQL Dialect">
+          <button
+            v-for="dialect in dialectOptions"
+            :key="dialect.value"
+            type="button"
+            role="radio"
+            :aria-checked="selectedDialect === dialect.value"
+            :class="['dialect-pill', { active: selectedDialect === dialect.value }]"
+            @click="selectDialect(dialect.value)"
+          >
+            <span class="dialect-name">{{ dialect.label }}</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -66,6 +73,30 @@ import { format } from 'sql-formatter'
 
 type SqlDialect = 'mysql' | 'postgresql' | 'sql'
 
+interface DialectOption {
+  label: string
+  value: SqlDialect
+  description: string
+}
+
+const dialectOptions: DialectOption[] = [
+  {
+    label: 'MySQL',
+    value: 'mysql',
+    description: 'ANSI SQL with backticks and LIMIT syntax'
+  },
+  {
+    label: 'PostgreSQL',
+    value: 'postgresql',
+    description: 'Supports CTEs, ILIKE, arrays and advanced types'
+  },
+  {
+    label: 'SQL Server',
+    value: 'sql',
+    description: 'T-SQL formatting with TOP, OFFSET, and brackets'
+  }
+]
+
 const selectedDialect = ref<SqlDialect>('mysql')
 const inputSql = ref('')
 const toastMessage = ref('')
@@ -93,6 +124,10 @@ watch([inputSql, selectedDialect], () => {
 
 function clearInput() {
   inputSql.value = ''
+}
+
+function selectDialect(dialect: SqlDialect) {
+  selectedDialect.value = dialect
 }
 
 function copyOutput() {
@@ -157,14 +192,73 @@ function showToast(message: string) {
   color: var(--vp-c-text-1);
 }
 
-.dialect-select {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 6px;
-  background: var(--vp-c-bg-soft);
+.dialect-toggle {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dialect-pill {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-divider) 70%, transparent);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 92%, rgba(255, 255, 255, 0.05));
   color: var(--vp-c-text-1);
-  font-size: 0.875rem;
-  min-width: 160px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.dialect-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at top left, color-mix(in srgb, var(--vp-c-brand-1) 65%, transparent) 0%, transparent 65%);
+  transition: opacity 0.3s ease;
+}
+
+.dialect-pill:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.dialect-pill.active {
+  border-color: var(--vp-c-brand-1);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 20%, var(--vp-c-bg-soft)), color-mix(in srgb, var(--vp-c-bg-soft) 70%, transparent));
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16), inset 0 0 0 1px color-mix(in srgb, var(--vp-c-brand-1) 25%, transparent);
+}
+
+.dialect-pill.active::after {
+  opacity: 1;
+}
+
+.dialect-pill:focus-visible {
+  outline: none;
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vp-c-brand-1) 25%, transparent);
+}
+
+.dialect-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+.dialect-desc {
+  font-size: 0.78rem;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--vp-c-text-1) 65%, black 10%);
 }
 
 .formatter-layout {
