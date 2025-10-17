@@ -163,7 +163,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/yourusername/webdev' }
+      { icon: 'github', link: 'https://github.com/shadowlanes/webdev' }
     ],
 
     search: {
