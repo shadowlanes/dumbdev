@@ -17,23 +17,25 @@
     </div>
 
     <div class="formatter-layout">
-      <div class="input-section">
-        <div class="section-header">
+      <div class="panel input-panel">
+        <div class="panel-header">
           <h3>Input SQL</h3>
           <button class="btn-secondary" @click="clearInput" :disabled="!inputSql.trim()">
             Clear
           </button>
         </div>
-        <textarea
-          v-model="inputSql"
-          class="sql-input"
-          placeholder="Paste or type your SQL query here..."
-          spellcheck="false"
-        ></textarea>
+        <div class="panel-body">
+          <textarea
+            v-model="inputSql"
+            class="sql-input"
+            placeholder="Paste or type your SQL query here..."
+            spellcheck="false"
+          ></textarea>
+        </div>
       </div>
 
-      <div class="output-section">
-        <div class="section-header">
+      <div class="panel output-panel">
+        <div class="panel-header">
           <h3>Formatted SQL</h3>
           <button class="btn-secondary" @click="copyOutput" :disabled="!formattedSql.trim()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -43,9 +45,11 @@
             Copy
           </button>
         </div>
-        <pre class="sql-output" v-if="formattedSql">{{ formattedSql }}</pre>
-        <div v-else class="empty-output">
-          <p>Formatted SQL will appear here...</p>
+        <div class="panel-body">
+          <pre class="sql-output" v-if="formattedSql">{{ formattedSql }}</pre>
+          <div v-else class="empty-output">
+            <p>Formatted SQL will appear here...</p>
+          </div>
         </div>
       </div>
     </div>
@@ -79,12 +83,12 @@ const formattedSql = computed(() => {
     })
   } catch (error) {
     console.error('SQL formatting error:', error)
-    return inputSql.value // Return original if formatting fails
+    return inputSql.value
   }
 })
 
 watch([inputSql, selectedDialect], () => {
-  // Auto-format happens via computed property
+  // reactive dependencies trigger computed formatter
 })
 
 function clearInput() {
@@ -160,14 +164,14 @@ function showToast(message: string) {
   background: var(--vp-c-bg-soft);
   color: var(--vp-c-text-1);
   font-size: 0.875rem;
-  min-width: 150px;
+  min-width: 160px;
 }
 
 .formatter-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 2rem;
-  margin-top: 2rem;
+  align-items: stretch;
 }
 
 @media (max-width: 1024px) {
@@ -177,81 +181,95 @@ function showToast(message: string) {
   }
 }
 
-.input-section, .output-section {
+.panel {
   display: flex;
   flex-direction: column;
+  min-height: 520px;
+  gap: 1rem;
 }
 
-.section-header {
+.panel-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--vp-c-divider);
 }
 
-.section-header h3 {
+.panel-header h3 {
+  margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--vp-c-text-1);
-  margin: 0;
 }
 
-.sql-input {
+.panel-body {
   flex: 1;
-  min-height: 400px;
-  padding: 1rem;
+  display: flex;
+}
+
+.sql-input,
+.sql-output,
+.empty-output {
+  flex: 1;
+  padding: 1rem 1.25rem;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--vp-c-bg-soft);
   color: var(--vp-c-text-1);
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  box-shadow: var(--vp-shadow-1);
+}
+
+.sql-input {
+  width: 100%;
   resize: vertical;
+  min-height: 100%;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .sql-input:focus {
   border-color: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent);
 }
 
 .sql-output {
-  flex: 1;
-  min-height: 400px;
-  padding: 1rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  background: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-1);
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  margin: 0;
   overflow-x: auto;
   white-space: pre-wrap;
   word-wrap: break-word;
-  margin: 0;
 }
 
 .empty-output {
-  flex: 1;
-  min-height: 400px;
-  padding: 2rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  background: var(--vp-c-bg-alt);
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--vp-c-bg-alt);
 }
 
 .empty-output p {
+  margin: 0;
   color: var(--vp-c-text-2);
   font-style: italic;
-  margin: 0;
 }
 
-.btn-primary, .btn-secondary {
+.panel-header button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+}
+
+.panel-header button svg {
+  flex-shrink: 0;
+}
+
+.btn-primary,
+.btn-secondary {
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -298,15 +316,21 @@ function showToast(message: string) {
 }
 
 @keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
-.toast-enter-active, .toast-leave-active {
+.toast-enter-active,
+.toast-leave-active {
   transition: opacity 0.3s ease;
 }
 
-.toast-enter-from, .toast-leave-to {
+.toast-enter-from,
+.toast-leave-to {
   opacity: 0;
 }
 </style>
