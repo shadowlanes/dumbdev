@@ -159,7 +159,8 @@ export default defineConfig({
       // Apps Directory sidebar for apps without internal navigation
       '/color-palette-extractor/': getAppsDirectorySidebar(),
       '/color-palette-generator/': getAppsDirectorySidebar(),
-      '/favicon-builder/': getAppsDirectorySidebar()
+      '/favicon-builder/': getAppsDirectorySidebar(),
+      '/sql-formatter/': getAppsDirectorySidebar()
     },
 
     socialLinks: [

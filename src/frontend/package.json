@@ -19,7 +19,8 @@
   "devDependencies": {
     "vitepress": "^1.6.4",
     "vue": "^3.5.22",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "sql-formatter": "^15.4.2"
   }
 }
 

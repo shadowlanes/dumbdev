@@ -50,6 +50,12 @@ features:
     link: /favicon-builder/
     linkText: Build Favicons
 
+  - icon: 📄
+    title: SQL Formatter
+    details: Format SQL queries for MySQL, PostgreSQL, and SQL Server with automatic formatting as you type.
+    link: /sql-formatter/
+    linkText: Format SQL
+
   - icon: 🌈
     title: Color Palette Generator
     details: Generate harmonious color palettes based on color theory principles. Perfect for design projects.

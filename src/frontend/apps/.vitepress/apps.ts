@@ -72,6 +72,16 @@ export const apps: App[] = [
     category: 'development-utils',
     status: 'active',
     hasInternalNav: false
+  },
+  {
+    id: 'sql-formatter',
+    name: 'SQL Formatter',
+    icon: '📄',
+    description: 'Format SQL queries for MySQL, PostgreSQL, and SQL Server with automatic formatting',
+    link: '/sql-formatter/',
+    category: 'development-utils',
+    status: 'active',
+    hasInternalNav: false
   }
 ]
 
