@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dumdev.shadowlanes.com/sitemap.xml
+Sitemap: https://dumddev.me/sitemap.xml

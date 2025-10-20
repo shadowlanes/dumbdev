@@ -164,7 +164,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/shadowlanes/dumdev' }
+      { icon: 'github', link: 'https://github.com/shadowlanes/dumbdev' }
     ],
 
     search: {
