@@ -5,7 +5,7 @@ description: Generate harmonious color palettes based on color theory principles
 head:
   - - link
     - rel: canonical
-      href: https://dumddev.me/color-palette-generator/
+      href: https://dumbdev.me/color-palette-generator/
   - - script
     - type: application/ld+json
       children: |
@@ -14,7 +14,7 @@ head:
           "@type": "SoftwareApplication",
           "name": "Color Palette Generator",
           "description": "Generate harmonious color palettes based on color theory principles",
-          "url": "https://dumddev.me/color-palette-generator/",
+          "url": "https://dumbdev.me/color-palette-generator/",
           "applicationCategory": "DeveloperApplication",
           "operatingSystem": "Web Browser"
         }

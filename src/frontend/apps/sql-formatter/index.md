@@ -5,7 +5,7 @@ description: Format SQL queries for MySQL, PostgreSQL, and SQL Server with autom
 head:
   - - link
     - rel: canonical
-      href: https://dumddev.me/sql-formatter/
+      href: https://dumbdev.me/sql-formatter/
   - - script
     - type: application/ld+json
       children: |
@@ -14,7 +14,7 @@ head:
           "@type": "SoftwareApplication",
           "name": "SQL Formatter",
           "description": "Format SQL queries for MySQL, PostgreSQL, and SQL Server with automatic formatting as you type",
-          "url": "https://dumddev.me/sql-formatter/",
+          "url": "https://dumbdev.me/sql-formatter/",
           "applicationCategory": "DeveloperApplication",
           "operatingSystem": "Web Browser"
         }

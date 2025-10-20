@@ -5,7 +5,7 @@ description: Generate complete favicon sets from PNG or JPEG images entirely in 
 head:
   - - link
     - rel: canonical
-      href: https://dumddev.me/favicon-builder/
+      href: https://dumbdev.me/favicon-builder/
   - - script
     - type: application/ld+json
       children: |
@@ -14,7 +14,7 @@ head:
           "@type": "SoftwareApplication",
           "name": "Favicon Builder",
           "description": "Generate complete favicon sets from PNG or JPEG images entirely in your browser",
-          "url": "https://dumddev.me/favicon-builder/",
+          "url": "https://dumbdev.me/favicon-builder/",
           "applicationCategory": "DeveloperApplication",
           "operatingSystem": "Web Browser"
         }

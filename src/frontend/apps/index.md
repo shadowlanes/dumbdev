@@ -5,7 +5,7 @@ description: "A collection of independent micro apps for web developers"
 head:
   - - link
     - rel: canonical
-      href: https://dumddev.me/
+      href: https://dumbdev.me/
   - - script
     - type: application/ld+json
       children: |
@@ -14,7 +14,7 @@ head:
           "@type": "WebSite",
           "name": "Web Developer Tools",
           "description": "A collection of independent micro apps for web developers",
-          "url": "https://dumddev.me"
+          "url": "https://dumbdev.me"
         }
 hero:
   name: "Web Developer Tools"

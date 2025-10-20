@@ -5,7 +5,7 @@ description: Extract beautiful color palettes from images using Vibrant.js
 head:
   - - link
     - rel: canonical
-      href: https://dumddev.me/color-palette-extractor/
+      href: https://dumbdev.me/color-palette-extractor/
   - - script
     - type: application/ld+json
       children: |
@@ -14,7 +14,7 @@ head:
           "@type": "SoftwareApplication",
           "name": "Color Palette Extractor",
           "description": "Extract beautiful color palettes from images using Vibrant.js",
-          "url": "https://dumddev.me/color-palette-extractor/",
+          "url": "https://dumbdev.me/color-palette-extractor/",
           "applicationCategory": "DeveloperApplication",
           "operatingSystem": "Web Browser"
         }
