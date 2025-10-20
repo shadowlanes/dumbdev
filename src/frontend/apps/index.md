@@ -5,7 +5,7 @@ description: "A collection of independent micro apps for web developers"
 head:
   - - link
     - rel: canonical
-      href: https://webdev.shadowlanes.com/
+      href: https://dumdev.shadowlanes.com/
   - - script
     - type: application/ld+json
       children: |
@@ -14,7 +14,7 @@ head:
           "@type": "WebSite",
           "name": "Web Developer Tools",
           "description": "A collection of independent micro apps for web developers",
-          "url": "https://webdev.shadowlanes.com"
+          "url": "https://dumdev.shadowlanes.com"
         }
 hero:
   name: "Web Developer Tools"
@@ -29,7 +29,7 @@ hero:
       link: /http-codes/
     - theme: alt
       text: View on GitHub
-      link: https://github.com/shadowlanes/webdev
+      link: https://github.com/shadowlanes/dumdev
 
 features:
   - icon: 🔍

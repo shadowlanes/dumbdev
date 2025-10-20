@@ -1,6 +1,6 @@
-# Contributing to webdev
+# Contributing to dumdev
 
-Thank you for your interest in contributing to the webdev monorepo!
+Thank you for your interest in contributing to the dumdev monorepo!
 
 ## Monorepo Structure
 

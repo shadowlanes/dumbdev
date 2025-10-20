@@ -1,4 +1,4 @@
-# webdev
+# dumdev
 
 A monorepo containing a collection of independent micro apps for web developers.
 
@@ -34,8 +34,8 @@ Browse the `apps/` directory to see all available micro apps. Each app has its o
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/webdev.git
-cd webdev
+git clone https://github.com/yourusername/dumdev.git
+cd dumdev
 
 # Install dependencies
 pnpm install
@@ -78,7 +78,7 @@ pnpm run generate:http-codes
 ## 📁 Project Structure
 
 ```
-webdev/
+dumdev/
 ├── src/
 │   ├── frontend/                 # VitePress frontend application
 │   │   ├── apps/                 # VitePress documentation root

@@ -5,7 +5,7 @@ description: Generate harmonious color palettes based on color theory principles
 head:
   - - link
     - rel: canonical
-      href: https://webdev.shadowlanes.com/color-palette-generator/
+      href: https://dumdev.shadowlanes.com/color-palette-generator/
   - - script
     - type: application/ld+json
       children: |
@@ -14,7 +14,7 @@ head:
           "@type": "SoftwareApplication",
           "name": "Color Palette Generator",
           "description": "Generate harmonious color palettes based on color theory principles",
-          "url": "https://webdev.shadowlanes.com/color-palette-generator/",
+          "url": "https://dumdev.shadowlanes.com/color-palette-generator/",
           "applicationCategory": "DeveloperApplication",
           "operatingSystem": "Web Browser"
         }
@@ -45,7 +45,7 @@ This tool helps web developers and designers quickly generate harmonious color p
 
 ## Contributing
 
-Want to help build this tool? Check out our [Contributing Guide](https://github.com/shadowlanes/webdev/blob/main/CONTRIBUTING.md) to get started.
+Want to help build this tool? Check out our [Contributing Guide](https://github.com/shadowlanes/dumdev/blob/main/CONTRIBUTING.md) to get started.
 
 ## Current Status
 
