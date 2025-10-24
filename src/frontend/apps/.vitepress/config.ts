@@ -160,7 +160,8 @@ export default defineConfig({
       '/color-palette-extractor/': getAppsDirectorySidebar(),
       '/color-palette-generator/': getAppsDirectorySidebar(),
       '/favicon-builder/': getAppsDirectorySidebar(),
-      '/sql-formatter/': getAppsDirectorySidebar()
+      '/sql-formatter/': getAppsDirectorySidebar(),
+      '/json-formatter/': getAppsDirectorySidebar()
     },
 
     socialLinks: [
