@@ -82,6 +82,16 @@ export const apps: App[] = [
     category: 'development-utils',
     status: 'active',
     hasInternalNav: false
+  },
+  {
+    id: 'json-formatter',
+    name: 'JSON Formatter',
+    icon: '🔣',
+    description: 'Format JSON strings for better readability with automatic formatting as you type',
+    link: '/json-formatter/',
+    category: 'development-utils',
+    status: 'active',
+    hasInternalNav: false
   }
 ]
 

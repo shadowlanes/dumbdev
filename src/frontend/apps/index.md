@@ -28,6 +28,7 @@ head:
         <div class="menu-panel" role="menu">
           <a role="menuitem" href="/http-codes/">HTTP Codes Explainer</a>
           <a role="menuitem" href="/sql-formatter/">SQL Formatter</a>
+          <a role="menuitem" href="/json-formatter/">JSON Formatter</a>
         </div>
       </div>
       <div class="menu-dropdown">
@@ -61,6 +62,10 @@ head:
         <span class="icon-emoji" aria-hidden="true">📄</span>
         <span class="icon-label">SQL Formatter</span>
       </a>
+      <a class="desktop-icon" href="/json-formatter/">
+        <span class="icon-emoji" aria-hidden="true">🔣</span>
+        <span class="icon-label">JSON Formatter</span>
+      </a>
       <a class="desktop-icon" href="/color-palette-extractor/">
         <span class="icon-emoji" aria-hidden="true">🎨</span>
         <span class="icon-label">Palette Extractor</span>
@@ -93,6 +98,10 @@ head:
       <a class="dock-icon" href="/sql-formatter/">
         <span aria-hidden="true">📄</span>
         <span>SQL</span>
+      </a>
+      <a class="dock-icon" href="/json-formatter/">
+        <span aria-hidden="true">🔣</span>
+        <span>JSON</span>
       </a>
       <a class="dock-icon" href="/color-palette-generator/">
         <span aria-hidden="true">🌈</span>
