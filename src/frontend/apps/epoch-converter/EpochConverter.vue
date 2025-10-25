@@ -550,14 +550,14 @@ function showToast(message: string) {
   transition: all 0.2s ease;
   border: none;
   background: transparent;
-  color: var(--vp-c-text-2);
+  color: white;
   flex-shrink: 0;
 }
 
 .btn-copy:hover,
 .btn-copy-large:hover {
-  background: var(--vp-c-bg);
-  color: var(--vp-c-brand-1);
+  background: transparent;
+  color: #fbbf24;
 }
 
 .btn-copy:active,
@@ -572,13 +572,15 @@ function showToast(message: string) {
 .btn-copy img,
 .btn-copy-large img {
   display: block;
-  opacity: 0.6;
+  opacity: 1;
   transition: opacity 0.2s ease;
+  filter: brightness(0) invert(1);
 }
 
 .btn-copy:hover img,
 .btn-copy-large:hover img {
   opacity: 1;
+  filter: brightness(0) saturate(100%) invert(75%) sepia(64%) saturate(466%) hue-rotate(358deg) brightness(102%) contrast(96%);
 }
 
 .relative-time-header {
