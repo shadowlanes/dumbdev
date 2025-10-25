@@ -51,7 +51,7 @@
                     @click="copyToClipboard(convertedDate.readable)"
                     title="Copy to clipboard"
                   >
-                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                    <CopyIcon />
                   </button>
                 </div>
               </div>
@@ -64,7 +64,7 @@
                     @click="copyToClipboard(convertedDate.iso)"
                     title="Copy to clipboard"
                   >
-                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                    <CopyIcon />
                   </button>
                 </div>
               </div>
@@ -77,7 +77,7 @@
                     @click="copyToClipboard(convertedDate.local)"
                     title="Copy to clipboard"
                   >
-                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                    <CopyIcon />
                   </button>
                 </div>
               </div>
@@ -90,7 +90,7 @@
                     @click="copyToClipboard(detectedFormat)"
                     title="Copy to clipboard"
                   >
-                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                    <CopyIcon />
                   </button>
                 </div>
               </div>
@@ -109,7 +109,7 @@
                     @click="copyToClipboard(currentEpoch.utc)"
                     title="Copy to clipboard"
                   >
-                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                    <CopyIcon />
                   </button>
                 </div>
               </div>
@@ -122,7 +122,7 @@
                     @click="copyToClipboard(currentEpoch.seconds.toString())"
                     title="Copy to clipboard"
                   >
-                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                    <CopyIcon />
                   </button>
                 </div>
               </div>
@@ -135,7 +135,7 @@
                     @click="copyToClipboard(currentEpoch.milliseconds.toString())"
                     title="Copy to clipboard"
                   >
-                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                    <CopyIcon />
                   </button>
                 </div>
               </div>
@@ -162,6 +162,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import CopyIcon from './CopyIcon.vue'
 
 const epochInput = ref('')
 const toastMessage = ref('')
@@ -416,21 +417,34 @@ function showToast(message: string) {
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: none;
-  background: var(--vp-c-bg-alt);
+  border: 1.5px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
   color: var(--vp-c-text-1);
-  border: 1px solid var(--vp-c-divider);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-share:hover {
-  background: var(--vp-c-bg-soft);
+  background: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-share:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-share svg {
   flex-shrink: 0;
+  transition: stroke 0.2s ease;
+}
+
+.btn-share:hover svg {
+  stroke: white;
 }
 
 .epoch-input {
@@ -501,7 +515,6 @@ function showToast(message: string) {
 .result-item {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   padding: 0.75rem;
   border-radius: 8px;
   background: var(--vp-c-bg-alt);
@@ -544,43 +557,44 @@ function showToast(message: string) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.375rem;
-  border-radius: 4px;
+  padding: 0.5rem;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: none;
-  background: transparent;
-  color: white;
+  border: 1.5px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-2);
   flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-copy:hover,
 .btn-copy-large:hover {
-  background: transparent;
-  color: #fbbf24;
+  background: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-copy:active,
 .btn-copy-large:active {
   transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-copy-large {
-  padding: 0.5rem;
+  padding: 0.625rem;
 }
 
-.btn-copy img,
-.btn-copy-large img {
+.btn-copy svg,
+.btn-copy-large svg {
   display: block;
-  opacity: 1;
-  transition: opacity 0.2s ease;
-  filter: brightness(0) invert(1);
+  transition: all 0.2s ease;
 }
 
-.btn-copy:hover img,
-.btn-copy-large:hover img {
-  opacity: 1;
-  filter: brightness(0) saturate(100%) invert(75%) sepia(64%) saturate(466%) hue-rotate(358deg) brightness(102%) contrast(96%);
+.btn-copy:hover svg,
+.btn-copy-large:hover svg {
+  stroke: white;
 }
 
 .relative-time-header {
