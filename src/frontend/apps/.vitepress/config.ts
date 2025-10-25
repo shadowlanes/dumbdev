@@ -3,7 +3,7 @@ import { getNavItems, getAppsDirectorySidebar } from './apps'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Web Developer Tools",
+  title: "Dumb Dev Tools",
   description: "A collection of independent micro apps for web developers",
   lang: 'en-US',
   
