@@ -44,19 +44,55 @@
             <div class="result-grid">
               <div class="result-item highlighted">
                 <span class="result-label">Human Readable (UTC)</span>
-                <span class="result-value">{{ convertedDate.readable }}</span>
+                <div class="value-with-copy">
+                  <span class="result-value">{{ convertedDate.readable }}</span>
+                  <button 
+                    class="btn-copy" 
+                    @click="copyToClipboard(convertedDate.readable)"
+                    title="Copy to clipboard"
+                  >
+                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                  </button>
+                </div>
               </div>
               <div class="result-item">
                 <span class="result-label">ISO-8601 (UTC)</span>
-                <span class="result-value">{{ convertedDate.iso }}</span>
+                <div class="value-with-copy">
+                  <span class="result-value">{{ convertedDate.iso }}</span>
+                  <button 
+                    class="btn-copy" 
+                    @click="copyToClipboard(convertedDate.iso)"
+                    title="Copy to clipboard"
+                  >
+                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                  </button>
+                </div>
               </div>
               <div class="result-item">
                 <span class="result-label">Local Time</span>
-                <span class="result-value">{{ convertedDate.local }}</span>
+                <div class="value-with-copy">
+                  <span class="result-value">{{ convertedDate.local }}</span>
+                  <button 
+                    class="btn-copy" 
+                    @click="copyToClipboard(convertedDate.local)"
+                    title="Copy to clipboard"
+                  >
+                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                  </button>
+                </div>
               </div>
               <div class="result-item">
                 <span class="result-label">Detected Format</span>
-                <span class="result-value">{{ detectedFormat }}</span>
+                <div class="value-with-copy">
+                  <span class="result-value">{{ detectedFormat }}</span>
+                  <button 
+                    class="btn-copy" 
+                    @click="copyToClipboard(detectedFormat)"
+                    title="Copy to clipboard"
+                  >
+                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -66,15 +102,42 @@
             <div class="time-display">
               <div class="time-item">
                 <span class="time-label">UTC</span>
-                <span class="time-value">{{ currentEpoch.utc }}</span>
+                <div class="value-with-copy">
+                  <span class="time-value">{{ currentEpoch.utc }}</span>
+                  <button 
+                    class="btn-copy" 
+                    @click="copyToClipboard(currentEpoch.utc)"
+                    title="Copy to clipboard"
+                  >
+                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                  </button>
+                </div>
               </div>
               <div class="time-item">
                 <span class="time-label">Epoch (seconds)</span>
-                <span class="time-value">{{ currentEpoch.seconds }}</span>
+                <div class="value-with-copy">
+                  <span class="time-value">{{ currentEpoch.seconds }}</span>
+                  <button 
+                    class="btn-copy" 
+                    @click="copyToClipboard(currentEpoch.seconds.toString())"
+                    title="Copy to clipboard"
+                  >
+                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                  </button>
+                </div>
               </div>
               <div class="time-item">
                 <span class="time-label">Epoch (milliseconds)</span>
-                <span class="time-value">{{ currentEpoch.milliseconds }}</span>
+                <div class="value-with-copy">
+                  <span class="time-value">{{ currentEpoch.milliseconds }}</span>
+                  <button 
+                    class="btn-copy" 
+                    @click="copyToClipboard(currentEpoch.milliseconds.toString())"
+                    title="Copy to clipboard"
+                  >
+                    <img src="/copy-icon.svg" alt="Copy" width="14" height="14" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -277,6 +340,14 @@ function shareEpochTime() {
   })
 }
 
+function copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard!')
+  }).catch(() => {
+    showToast('Failed to copy')
+  })
+}
+
 function showToast(message: string) {
   toastMessage.value = message
   setTimeout(() => {
@@ -430,7 +501,7 @@ function showToast(message: string) {
 .result-item {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
   padding: 0.75rem;
   border-radius: 8px;
   background: var(--vp-c-bg-alt);
@@ -459,6 +530,67 @@ function showToast(message: string) {
   color: var(--vp-c-text-1);
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   word-break: break-all;
+}
+
+.value-with-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.btn-copy,
+.btn-copy-large {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  color: var(--vp-c-text-2);
+  flex-shrink: 0;
+}
+
+.btn-copy:hover,
+.btn-copy-large:hover {
+  background: var(--vp-c-bg);
+  color: var(--vp-c-brand-1);
+}
+
+.btn-copy:active,
+.btn-copy-large:active {
+  transform: scale(0.95);
+}
+
+.btn-copy-large {
+  padding: 0.5rem;
+}
+
+.btn-copy img,
+.btn-copy-large img {
+  display: block;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.btn-copy:hover img,
+.btn-copy-large:hover img {
+  opacity: 1;
+}
+
+.relative-time-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.relative-time-header h3 {
+  margin: 0;
 }
 
 .relative-time-text {
