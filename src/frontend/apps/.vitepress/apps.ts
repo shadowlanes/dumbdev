@@ -112,6 +112,16 @@ export const apps: App[] = [
     category: 'development-utils',
     status: 'active',
     hasInternalNav: false
+  },
+  {
+    id: 'encoder-decoder',
+    name: 'Encoder / Decoder',
+    icon: '🔐',
+    description: 'Encode and decode strings with multiple formats including Base64, URL, HTML entities, and JWT decoding',
+    link: '/encoder-decoder/',
+    category: 'development-utils',
+    status: 'active',
+    hasInternalNav: false
   }
 ]
 

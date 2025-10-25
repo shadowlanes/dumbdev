@@ -163,7 +163,8 @@ export default defineConfig({
       '/sql-formatter/': getAppsDirectorySidebar(),
       '/json-formatter/': getAppsDirectorySidebar(),
       '/cron-validator/': getAppsDirectorySidebar(),
-      '/epoch-converter/': getAppsDirectorySidebar()
+      '/epoch-converter/': getAppsDirectorySidebar(),
+      '/encoder-decoder/': getAppsDirectorySidebar()
     },
 
     socialLinks: [

@@ -31,6 +31,7 @@ head:
           <a role="menuitem" href="/json-formatter/">JSON Formatter</a>
           <a role="menuitem" href="/cron-validator/">Cron Validator</a>
           <a role="menuitem" href="/epoch-converter/">Epoch Time Converter</a>
+          <a role="menuitem" href="/encoder-decoder/">Encoder / Decoder</a>
         </div>
       </div>
       <div class="menu-dropdown">
@@ -88,6 +89,10 @@ head:
         <span class="icon-emoji" aria-hidden="true">🖼️</span>
         <span class="icon-label">Favicon Builder</span>
       </a>
+      <a class="desktop-icon" href="/encoder-decoder/">
+        <span class="icon-emoji" aria-hidden="true">🔐</span>
+        <span class="icon-label">Encoder / Decoder</span>
+      </a>
     </div>
   </div>
 
@@ -124,6 +129,10 @@ head:
       <a class="dock-icon" href="/color-palette-generator/">
         <span aria-hidden="true">🌈</span>
         <span>Generator</span>
+      </a>
+      <a class="dock-icon" href="/encoder-decoder/">
+        <span aria-hidden="true">🔐</span>
+        <span>Encoder</span>
       </a>
     </div>
   </div>
@@ -270,14 +279,14 @@ head:
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 4rem 2rem 6rem;
+  padding: 4rem 1rem 6rem;
 }
 
 .desktop-icons {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 2.5rem;
-  max-width: 640px;
+  gap: 2rem;
+  max-width: 800px;
 }
 
 .desktop-icon {
@@ -381,7 +390,7 @@ head:
   }
 
   .desktop {
-    padding: 3rem 1.5rem 6rem;
+    padding: 3rem 0.75rem 6rem;
   }
 
   .desktop-icons {
