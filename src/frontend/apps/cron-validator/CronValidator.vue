@@ -134,13 +134,13 @@
                   v-if="builder.minute.type === 'specific'"
                   class="field-inputs"
                 >
-                  <span class="input-label">At minute(s)</span>
+                  <span class="input-label">Pattern</span>
                   <input
                     type="text"
                     v-model="builder.minute.specific"
                     @input="updateCronFromBuilder"
                     class="inline-input wide"
-                    placeholder="0,15,30,45"
+                    placeholder="e.g., 0,15,30 or 1-5,10,*/3"
                   />
                 </div>
 
@@ -205,13 +205,13 @@
                   v-if="builder.hour.type === 'specific'"
                   class="field-inputs"
                 >
-                  <span class="input-label">At hour(s)</span>
+                  <span class="input-label">Pattern</span>
                   <input
                     type="text"
                     v-model="builder.hour.specific"
                     @input="updateCronFromBuilder"
                     class="inline-input wide"
-                    placeholder="0,6,12,18"
+                    placeholder="e.g., 0,6,12 or 9-17,22,*/3"
                   />
                 </div>
 
@@ -273,13 +273,13 @@
                   v-if="builder.dayOfMonth.type === 'specific'"
                   class="field-inputs"
                 >
-                  <span class="input-label">On day(s)</span>
+                  <span class="input-label">Pattern</span>
                   <input
                     type="text"
                     v-model="builder.dayOfMonth.specific"
                     @input="updateCronFromBuilder"
                     class="inline-input wide"
-                    placeholder="1,15,30"
+                    placeholder="e.g., 1,15,30 or 1-7,15,*/3"
                   />
                 </div>
 
@@ -309,77 +309,173 @@
               </div>
             </div>
 
-            <!-- Month Field -->
-            <div class="builder-field">
-              <label class="builder-label">🗓️ Month</label>
-              <div class="field-controls">
-                <select
-                  v-model="builder.month.type"
-                  @change="updateCronFromBuilder"
-                  class="field-select"
-                >
-                  <option value="every">Every month</option>
-                  <option value="specific">Specific month(s)</option>
-                </select>
-              </div>
-              <div
-                v-if="builder.month.type === 'specific'"
-                class="month-picker"
+          <!-- Month Field -->
+          <div class="builder-field">
+            <label class="builder-label">🗓️ Month</label>
+            <div class="field-controls">
+              <select
+                v-model="builder.month.type"
+                @change="updateCronFromBuilder"
+                class="field-select"
               >
-                <button
-                  v-for="(month, index) in months"
-                  :key="index"
-                  type="button"
-                  :class="[
-                    'month-circle',
-                    {
-                      selected: builder.month.selected.includes(index + 1),
-                      january: index === 0,
-                    },
-                  ]"
-                  @click="toggleMonth(index + 1)"
-                  :title="month"
-                >
-                  {{ month.substring(0, 3) }}
-                </button>
-              </div>
-            </div>
+                <option value="every">Every month</option>
+                <option value="interval">Every N month(s)</option>
+                <option value="specific">Specific month(s)</option>
+                <option value="range">Range</option>
+                <option value="mixed">Mixed (e.g., 1-3,5)</option>
+              </select>
 
-            <!-- Day of Week Field -->
-            <div class="builder-field">
-              <label class="builder-label">📆 Day of Week</label>
-              <div class="field-controls">
-                <select
-                  v-model="builder.dayOfWeek.type"
-                  @change="updateCronFromBuilder"
-                  class="field-select"
-                >
-                  <option value="every">Every day</option>
-                  <option value="specific">Specific day(s)</option>
-                </select>
+              <div v-if="builder.month.type === 'interval'" class="field-inputs">
+                <span class="input-label">Every</span>
+                <input
+                  type="number"
+                  v-model.number="builder.month.interval"
+                  @input="updateCronFromBuilder"
+                  class="inline-input"
+                  min="1"
+                  max="12"
+                />
+                <span class="input-label">month(s)</span>
               </div>
-              <div
-                v-if="builder.dayOfWeek.type === 'specific'"
-                class="day-picker"
-              >
-                <button
-                  v-for="(day, index) in daysOfWeek"
-                  :key="index"
-                  type="button"
-                  :class="[
-                    'day-circle',
-                    {
-                      selected: builder.dayOfWeek.selected.includes(index),
-                      sunday: index === 0,
-                    },
-                  ]"
-                  @click="toggleDay(index)"
-                  :title="day"
-                >
-                  {{ day.charAt(0) }}
-                </button>
+
+              <div v-if="builder.month.type === 'range'" class="field-inputs">
+                <span class="input-label">From</span>
+                <input
+                  type="number"
+                  v-model.number="builder.month.rangeStart"
+                  @input="updateCronFromBuilder"
+                  class="inline-input"
+                  min="1"
+                  max="12"
+                />
+                <span class="input-label">to</span>
+                <input
+                  type="number"
+                  v-model.number="builder.month.rangeEnd"
+                  @input="updateCronFromBuilder"
+                  class="inline-input"
+                  min="1"
+                  max="12"
+                />
+              </div>
+
+              <div v-if="builder.month.type === 'mixed'" class="field-inputs">
+                <span class="input-label">Pattern</span>
+                <input
+                  type="text"
+                  v-model="builder.month.mixed"
+                  @input="updateCronFromBuilder"
+                  class="inline-input wide"
+                  placeholder="e.g., 1-3,5,7-9"
+                />
               </div>
             </div>
+            <div
+              v-if="builder.month.type === 'specific'"
+              class="month-picker"
+            >
+              <button
+                v-for="(month, index) in months"
+                :key="index"
+                type="button"
+                :class="[
+                  'month-circle',
+                  {
+                    selected: builder.month.selected.includes(index + 1),
+                    january: index === 0,
+                  },
+                ]"
+                @click="toggleMonth(index + 1)"
+                :title="month"
+              >
+                {{ month.substring(0, 3) }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Day of Week Field -->
+          <div class="builder-field">
+            <label class="builder-label">📆 Day of Week</label>
+            <div class="field-controls">
+              <select
+                v-model="builder.dayOfWeek.type"
+                @change="updateCronFromBuilder"
+                class="field-select"
+              >
+                <option value="every">Every day</option>
+                <option value="interval">Every N day(s)</option>
+                <option value="specific">Specific day(s)</option>
+                <option value="range">Range</option>
+                <option value="mixed">Mixed (e.g., 1-3,5)</option>
+              </select>
+
+              <div v-if="builder.dayOfWeek.type === 'interval'" class="field-inputs">
+                <span class="input-label">Every</span>
+                <input
+                  type="number"
+                  v-model.number="builder.dayOfWeek.interval"
+                  @input="updateCronFromBuilder"
+                  class="inline-input"
+                  min="1"
+                  max="7"
+                />
+                <span class="input-label">day(s)</span>
+              </div>
+
+              <div v-if="builder.dayOfWeek.type === 'range'" class="field-inputs">
+                <span class="input-label">From</span>
+                <input
+                  type="number"
+                  v-model.number="builder.dayOfWeek.rangeStart"
+                  @input="updateCronFromBuilder"
+                  class="inline-input"
+                  min="0"
+                  max="6"
+                />
+                <span class="input-label">to</span>
+                <input
+                  type="number"
+                  v-model.number="builder.dayOfWeek.rangeEnd"
+                  @input="updateCronFromBuilder"
+                  class="inline-input"
+                  min="0"
+                  max="6"
+                />
+              </div>
+
+              <div v-if="builder.dayOfWeek.type === 'mixed'" class="field-inputs">
+                <span class="input-label">Pattern</span>
+                <input
+                  type="text"
+                  v-model="builder.dayOfWeek.mixed"
+                  @input="updateCronFromBuilder"
+                  class="inline-input wide"
+                  placeholder="e.g., 1-5,0"
+                />
+              </div>
+            </div>
+            <div
+              v-if="builder.dayOfWeek.type === 'specific'"
+              class="day-picker"
+            >
+              <button
+                v-for="(day, index) in daysOfWeek"
+                :key="index"
+                type="button"
+                :class="[
+                  'day-circle',
+                  {
+                    selected: builder.dayOfWeek.selected.includes(index),
+                    sunday: index === 0,
+                  },
+                ]"
+                @click="toggleDay(index)"
+                :title="day"
+              >
+                {{ day.charAt(0) }}
+              </button>
+            </div>
+          </div>
           </div>
         </div>
       </div>
@@ -501,11 +597,19 @@ const builder = ref({
   },
   month: {
     type: "every",
+    interval: 1,
+    rangeStart: 1,
+    rangeEnd: 12,
     selected: [] as number[],
+    mixed: "",
   },
   dayOfWeek: {
     type: "every",
+    interval: 1,
+    rangeStart: 0,
+    rangeEnd: 6,
     selected: [] as number[],
+    mixed: "",
   },
 });
 
@@ -565,39 +669,11 @@ function handleManualInput() {
 function buildFieldValue(field: string): string {
   const fieldData = builder.value[field as keyof typeof builder.value] as any;
 
-  if (field === "month") {
-    if (fieldData.type === "every") return "*";
-    if (
-      fieldData.type === "specific" &&
-      fieldData.selected &&
-      fieldData.selected.length > 0
-    ) {
-      return fieldData.selected.sort((a: number, b: number) => a - b).join(",");
-    }
-    return "*";
-  }
-
-  if (field === "dayOfWeek") {
-    if (fieldData.type === "every") return "*";
-    if (
-      fieldData.type === "specific" &&
-      fieldData.selected &&
-      fieldData.selected.length > 0
-    ) {
-      return fieldData.selected.sort((a: number, b: number) => a - b).join(",");
-    }
-    return "*";
-  }
-
   if (fieldData.type === "every") return "*";
 
   if (fieldData.type === "interval") {
     const interval = fieldData.interval || 1;
     return `*/${interval}`;
-  }
-
-  if (fieldData.type === "specific") {
-    return fieldData.specific || "*";
   }
 
   if (fieldData.type === "range") {
@@ -606,6 +682,19 @@ function buildFieldValue(field: string): string {
     if (start !== undefined && end !== undefined) {
       return `${start}-${end}`;
     }
+  }
+
+  if (fieldData.type === "mixed") {
+    return fieldData.mixed || "*";
+  }
+
+  if (fieldData.type === "specific") {
+    // For month and dayOfWeek with selected arrays
+    if (fieldData.selected && fieldData.selected.length > 0) {
+      return fieldData.selected.sort((a: number, b: number) => a - b).join(",");
+    }
+    // For other fields with specific values
+    return fieldData.specific || "*";
   }
 
   return "*";
@@ -640,18 +729,18 @@ function parseToBuilder(parts: string[]) {
   // Parse minute
   if (minute === "*") {
     builder.value.minute.type = "every";
-  } else if (minute.includes("/")) {
+  } else if (minute.startsWith("*/") && !minute.includes(",")) {
+    // Simple interval like "*/5"
     builder.value.minute.type = "interval";
     builder.value.minute.interval = parseInt(minute.split("/")[1]);
-  } else if (minute.includes("-")) {
+  } else if (!minute.includes(",") && minute.includes("-") && !minute.includes("/")) {
+    // Simple range like "0-30" without commas or steps
     builder.value.minute.type = "range";
     const [start, end] = minute.split("-");
     builder.value.minute.rangeStart = parseInt(start);
     builder.value.minute.rangeEnd = parseInt(end);
-  } else if (minute.includes(",")) {
-    builder.value.minute.type = "specific";
-    builder.value.minute.specific = minute;
   } else {
+    // Everything else: "1,2,3" or "1-3,5" or "1-3,5,*/3" - use text input
     builder.value.minute.type = "specific";
     builder.value.minute.specific = minute;
   }
@@ -659,18 +748,18 @@ function parseToBuilder(parts: string[]) {
   // Parse hour
   if (hour === "*") {
     builder.value.hour.type = "every";
-  } else if (hour.includes("/")) {
+  } else if (hour.startsWith("*/") && !hour.includes(",")) {
+    // Simple interval like "*/2"
     builder.value.hour.type = "interval";
     builder.value.hour.interval = parseInt(hour.split("/")[1]);
-  } else if (hour.includes("-")) {
+  } else if (!hour.includes(",") && hour.includes("-") && !hour.includes("/")) {
+    // Simple range like "9-17" without commas or steps
     builder.value.hour.type = "range";
     const [start, end] = hour.split("-");
     builder.value.hour.rangeStart = parseInt(start);
     builder.value.hour.rangeEnd = parseInt(end);
-  } else if (hour.includes(",")) {
-    builder.value.hour.type = "specific";
-    builder.value.hour.specific = hour;
   } else {
+    // Everything else: "1,2,3" or "1-3,5" or "9-17,22,*/3" - use text input
     builder.value.hour.type = "specific";
     builder.value.hour.specific = hour;
   }
@@ -678,18 +767,18 @@ function parseToBuilder(parts: string[]) {
   // Parse day of month
   if (dayOfMonth === "*") {
     builder.value.dayOfMonth.type = "every";
-  } else if (dayOfMonth.includes("/")) {
+  } else if (dayOfMonth.startsWith("*/") && !dayOfMonth.includes(",")) {
+    // Simple interval like "*/3"
     builder.value.dayOfMonth.type = "interval";
     builder.value.dayOfMonth.interval = parseInt(dayOfMonth.split("/")[1]);
-  } else if (dayOfMonth.includes("-")) {
+  } else if (!dayOfMonth.includes(",") && dayOfMonth.includes("-") && !dayOfMonth.includes("/")) {
+    // Simple range like "1-15" without commas or steps
     builder.value.dayOfMonth.type = "range";
     const [start, end] = dayOfMonth.split("-");
     builder.value.dayOfMonth.rangeStart = parseInt(start);
     builder.value.dayOfMonth.rangeEnd = parseInt(end);
-  } else if (dayOfMonth.includes(",")) {
-    builder.value.dayOfMonth.type = "specific";
-    builder.value.dayOfMonth.specific = dayOfMonth;
   } else {
+    // Everything else: "1,2,3" or "1-7,15" or "1-7,15,*/3" - use text input
     builder.value.dayOfMonth.type = "specific";
     builder.value.dayOfMonth.specific = dayOfMonth;
   }
@@ -698,7 +787,22 @@ function parseToBuilder(parts: string[]) {
   if (month === "*") {
     builder.value.month.type = "every";
     builder.value.month.selected = [];
+  } else if (month.startsWith("*/") && !month.includes(",")) {
+    // Simple interval like "*/3"
+    builder.value.month.type = "interval";
+    builder.value.month.interval = parseInt(month.split("/")[1]);
+  } else if (!month.includes(",") && month.includes("-") && !month.includes("/")) {
+    // Simple range like "1-6" without commas or steps
+    builder.value.month.type = "range";
+    const [start, end] = month.split("-");
+    builder.value.month.rangeStart = parseInt(start);
+    builder.value.month.rangeEnd = parseInt(end);
+  } else if (month.includes(",") && (month.includes("-") || month.includes("/"))) {
+    // Complex mixed pattern like "1-3,5" or "1,3,*/2" - use mixed text input
+    builder.value.month.type = "mixed";
+    builder.value.month.mixed = month;
   } else if (month.includes(",")) {
+    // Simple list like "1,2,3" - use checkboxes
     builder.value.month.type = "specific";
     builder.value.month.selected = month.split(",").map((m) => parseInt(m));
   } else {
@@ -710,14 +814,22 @@ function parseToBuilder(parts: string[]) {
   if (dayOfWeek === "*") {
     builder.value.dayOfWeek.type = "every";
     builder.value.dayOfWeek.selected = [];
-  } else if (dayOfWeek.includes("-")) {
-    builder.value.dayOfWeek.type = "specific";
-    const [start, end] = dayOfWeek.split("-").map((d) => parseInt(d));
-    builder.value.dayOfWeek.selected = [];
-    for (let i = start; i <= end; i++) {
-      builder.value.dayOfWeek.selected.push(i);
-    }
+  } else if (dayOfWeek.startsWith("*/") && !dayOfWeek.includes(",")) {
+    // Simple interval like "*/2"
+    builder.value.dayOfWeek.type = "interval";
+    builder.value.dayOfWeek.interval = parseInt(dayOfWeek.split("/")[1]);
+  } else if (!dayOfWeek.includes(",") && dayOfWeek.includes("-") && !dayOfWeek.includes("/")) {
+    // Simple range like "1-5" without commas or steps
+    builder.value.dayOfWeek.type = "range";
+    const [start, end] = dayOfWeek.split("-");
+    builder.value.dayOfWeek.rangeStart = parseInt(start);
+    builder.value.dayOfWeek.rangeEnd = parseInt(end);
+  } else if (dayOfWeek.includes(",") && (dayOfWeek.includes("-") || dayOfWeek.includes("/"))) {
+    // Complex mixed pattern like "1-3,5" or "1-5,0,*/2" - use mixed text input
+    builder.value.dayOfWeek.type = "mixed";
+    builder.value.dayOfWeek.mixed = dayOfWeek;
   } else if (dayOfWeek.includes(",")) {
+    // Simple list like "1,2,3" - use circular checkboxes
     builder.value.dayOfWeek.type = "specific";
     builder.value.dayOfWeek.selected = dayOfWeek
       .split(",")
@@ -860,6 +972,43 @@ function explainField(field: string, type: string): string {
   if (field === "*") return "Every " + type;
   if (field === "?") return "Any " + type;
 
+  // Handle complex mixed patterns with commas
+  if (field.includes(",")) {
+    const parts = field.split(",");
+    const descriptions: string[] = [];
+    
+    parts.forEach(part => {
+      if (part.includes("/")) {
+        const [range, step] = part.split("/");
+        if (range === "*") {
+          descriptions.push(`every ${step} ${type}(s)`);
+        } else {
+          descriptions.push(`every ${step} ${type}(s) from ${range}`);
+        }
+      } else if (part.includes("-")) {
+        const [start, end] = part.split("-");
+        if (type === "day-of-week") {
+          descriptions.push(`${getDayName(parseInt(start))}-${getDayName(parseInt(end))}`);
+        } else if (type === "month") {
+          descriptions.push(`${getMonthName(parseInt(start))}-${getMonthName(parseInt(end))}`);
+        } else {
+          descriptions.push(`${start}-${end}`);
+        }
+      } else {
+        if (type === "day-of-week") {
+          descriptions.push(getDayName(parseInt(part)));
+        } else if (type === "month") {
+          descriptions.push(getMonthName(parseInt(part)));
+        } else {
+          descriptions.push(part);
+        }
+      }
+    });
+    
+    return descriptions.join(", ");
+  }
+
+  // Simple interval
   if (field.includes("/")) {
     const [range, step] = field.split("/");
     if (range === "*") {
@@ -868,6 +1017,7 @@ function explainField(field: string, type: string): string {
     return `Every ${step} ${type}(s) starting from ${range}`;
   }
 
+  // Simple range
   if (field.includes("-")) {
     const [start, end] = field.split("-");
     if (type === "day-of-week") {
@@ -883,17 +1033,7 @@ function explainField(field: string, type: string): string {
     return `${start} through ${end}`;
   }
 
-  if (field.includes(",")) {
-    const values = field.split(",");
-    if (type === "day-of-week") {
-      return values.map((v) => getDayName(parseInt(v))).join(", ");
-    }
-    if (type === "month") {
-      return values.map((v) => getMonthName(parseInt(v))).join(", ");
-    }
-    return values.join(", ");
-  }
-
+  // Single value
   if (type === "day-of-week") {
     return getDayName(parseInt(field));
   }
@@ -912,24 +1052,26 @@ function generateExplanation(parts: string[]): string {
 
   let explanation = "This cron job runs ";
 
-  // Frequency
-  if (minute.includes("/")) {
-    const step = minute.split("/")[1];
-    explanation += `every ${step} minute(s)`;
-  } else if (minute === "*") {
+  // Minute
+  const minuteExplain = explainField(minute, "minute");
+  if (minute === "*") {
     explanation += "every minute";
+  } else if (minute.startsWith("*/") && !minute.includes(",")) {
+    explanation += minuteExplain.toLowerCase();
   } else {
-    explanation += `at minute ${minute}`;
+    explanation += `at ${minuteExplain.toLowerCase()}`;
   }
 
   // Hour
   if (hour !== "*") {
-    if (hour.includes("/")) {
-      const step = hour.split("/")[1];
-      explanation += ` of every ${step} hour(s)`;
-    } else if (hour.includes("-")) {
+    const hourExplain = explainField(hour, "hour");
+    if (hour.startsWith("*/") && !hour.includes(",")) {
+      explanation += ` of ${hourExplain.toLowerCase()}`;
+    } else if (hour.includes("-") && !hour.includes(",")) {
       const [start, end] = hour.split("-");
       explanation += ` between ${start}:00 and ${end}:00`;
+    } else if (hour.includes(",")) {
+      explanation += ` at hours (${hourExplain})`;
     } else {
       explanation += ` at ${hour}:00`;
     }
@@ -937,56 +1079,26 @@ function generateExplanation(parts: string[]): string {
 
   // Day of week
   if (dayOfWeek !== "*") {
-    if (dayOfWeek.includes("/")) {
-      const step = dayOfWeek.split("/")[1];
-      explanation += ` on every ${step} day(s) of the week`;
-    } else if (dayOfWeek.includes("-")) {
-      const [start, end] = dayOfWeek.split("-");
-      explanation += ` on ${getDayName(parseInt(start))} through ${getDayName(
-        parseInt(end)
-      )}`;
-    } else if (dayOfWeek.includes(",")) {
-      const days = dayOfWeek
-        .split(",")
-        .map((d) => getDayName(parseInt(d)))
-        .join(", ");
-      explanation += ` on ${days}`;
-    } else {
-      explanation += ` on ${getDayName(parseInt(dayOfWeek))}`;
-    }
+    const dayExplain = explainField(dayOfWeek, "day-of-week");
+    explanation += ` on ${dayExplain}`;
   }
 
   // Day of month
   if (dayOfMonth !== "*" && dayOfWeek === "*") {
-    if (dayOfMonth.includes("/")) {
-      const step = dayOfMonth.split("/")[1];
-      explanation += ` on every ${step} day(s) of the month`;
+    const domExplain = explainField(dayOfMonth, "day-of-month");
+    if (dayOfMonth.startsWith("*/") && !dayOfMonth.includes(",")) {
+      explanation += ` on ${domExplain.toLowerCase()}`;
     } else if (dayOfMonth.includes(",")) {
-      explanation += ` on day(s) ${dayOfMonth} of the month`;
+      explanation += ` on days (${domExplain})`;
     } else {
-      explanation += ` on day ${dayOfMonth} of the month`;
+      explanation += ` on day ${domExplain}`;
     }
   }
 
   // Month
   if (month !== "*") {
-    if (month.includes("/")) {
-      const step = month.split("/")[1];
-      explanation += ` every ${step} month(s)`;
-    } else if (month.includes("-")) {
-      const [start, end] = month.split("-");
-      explanation += ` in ${getMonthName(
-        parseInt(start)
-      )} through ${getMonthName(parseInt(end))}`;
-    } else if (month.includes(",")) {
-      const months = month
-        .split(",")
-        .map((m) => getMonthName(parseInt(m)))
-        .join(", ");
-      explanation += ` in ${months}`;
-    } else {
-      explanation += ` in ${getMonthName(parseInt(month))}`;
-    }
+    const monthExplain = explainField(month, "month");
+    explanation += ` in ${monthExplain}`;
   }
 
   return explanation + ".";
