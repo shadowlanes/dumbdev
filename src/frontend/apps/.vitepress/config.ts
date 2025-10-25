@@ -161,7 +161,8 @@ export default defineConfig({
       '/color-palette-generator/': getAppsDirectorySidebar(),
       '/favicon-builder/': getAppsDirectorySidebar(),
       '/sql-formatter/': getAppsDirectorySidebar(),
-      '/json-formatter/': getAppsDirectorySidebar()
+      '/json-formatter/': getAppsDirectorySidebar(),
+      '/cron-validator/': getAppsDirectorySidebar()
     },
 
     socialLinks: [

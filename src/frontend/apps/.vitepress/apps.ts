@@ -92,6 +92,16 @@ export const apps: App[] = [
     category: 'development-utils',
     status: 'active',
     hasInternalNav: false
+  },
+  {
+    id: 'cron-validator',
+    name: 'Cron Validator',
+    icon: '⏰',
+    description: 'Validate and understand cron expressions with real-time explanations and next run times',
+    link: '/cron-validator/',
+    category: 'development-utils',
+    status: 'active',
+    hasInternalNav: false
   }
 ]
 

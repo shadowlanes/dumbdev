@@ -17,10 +17,12 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "vitepress": "^1.6.4",
-    "vue": "^3.5.22",
+    "sql-formatter": "^15.4.2",
     "typescript": "^5.7.3",
-    "sql-formatter": "^15.4.2"
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.22"
+  },
+  "dependencies": {
+    "cron-validator": "^1.4.0"
   }
 }
-
