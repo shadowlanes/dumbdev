@@ -450,36 +450,57 @@ const copyEncoded = async () => {
 
 .type-selector {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .type-button {
-  display: flex;
+  position: relative;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 2px solid var(--vp-c-divider);
-  background: var(--vp-c-bg-alt);
+  padding: 0.6rem 1rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-divider) 70%, transparent);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 92%, rgba(255, 255, 255, 0.05));
   color: var(--vp-c-text-1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.type-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at top left, color-mix(in srgb, var(--vp-c-brand-1) 65%, transparent) 0%, transparent 65%);
+  transition: opacity 0.3s ease;
 }
 
 .type-button:hover {
-  background: var(--vp-c-bg-soft);
-  border-color: var(--vp-c-brand-1);
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
 }
 
 .type-button.active {
-  background: var(--vp-c-brand-1);
   border-color: var(--vp-c-brand-1);
-  color: white;
-  box-shadow: 0 4px 12px rgba(var(--vp-c-brand-rgb, 64, 128, 255), 0.3);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 20%, var(--vp-c-bg-soft)), color-mix(in srgb, var(--vp-c-bg-soft) 70%, transparent));
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16), inset 0 0 0 1px color-mix(in srgb, var(--vp-c-brand-1) 25%, transparent);
+}
+
+.type-button.active::after {
+  opacity: 1;
+}
+
+.type-button:focus-visible {
+  outline: none;
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vp-c-brand-1) 25%, transparent);
 }
 
 .type-icon {
@@ -487,7 +508,9 @@ const copyEncoded = async () => {
 }
 
 .type-label {
+  font-weight: 600;
   font-size: 0.95rem;
+  letter-spacing: 0.01em;
 }
 
 .panels-wrapper {
