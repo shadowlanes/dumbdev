@@ -260,6 +260,10 @@ function showToast(message: string) {
   cursor: pointer;
   transition: all 0.3s ease;
   background: var(--vp-c-bg-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .upload-area:hover {
@@ -275,7 +279,8 @@ function showToast(message: string) {
 
 .upload-icon {
   color: var(--vp-c-text-2);
-  margin-bottom: 1rem;
+  margin: 0 auto 1rem auto;
+  display: block;
 }
 
 .upload-title {
