@@ -102,6 +102,16 @@ export const apps: App[] = [
     category: 'development-utils',
     status: 'active',
     hasInternalNav: false
+  },
+  {
+    id: 'epoch-converter',
+    name: 'Epoch Time Converter',
+    icon: '🕐',
+    description: 'Convert epoch timestamps to human-readable dates with support for seconds, milliseconds, and nanoseconds',
+    link: '/epoch-converter/',
+    category: 'development-utils',
+    status: 'active',
+    hasInternalNav: false
   }
 ]
 

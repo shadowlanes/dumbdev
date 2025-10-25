@@ -162,7 +162,8 @@ export default defineConfig({
       '/favicon-builder/': getAppsDirectorySidebar(),
       '/sql-formatter/': getAppsDirectorySidebar(),
       '/json-formatter/': getAppsDirectorySidebar(),
-      '/cron-validator/': getAppsDirectorySidebar()
+      '/cron-validator/': getAppsDirectorySidebar(),
+      '/epoch-converter/': getAppsDirectorySidebar()
     },
 
     socialLinks: [
