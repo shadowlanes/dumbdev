@@ -7,6 +7,10 @@ export default defineConfig({
   description: "A collection of independent micro apps for web developers",
   lang: 'en-US',
   
+  sitemap: {
+    hostname: 'https://dumbdev.me'
+  },
+  
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#ff6b35' }],
