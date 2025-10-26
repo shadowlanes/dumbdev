@@ -14,6 +14,11 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['meta', { name: 'theme-color', content: '#ff6b35' }],
+    ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-WB6CLSQ1DG' }],
+    ['script', {}, `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-WB6CLSQ1DG');`]
   ],
 
   themeConfig: {
