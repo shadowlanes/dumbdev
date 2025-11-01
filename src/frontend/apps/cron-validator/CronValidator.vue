@@ -36,7 +36,6 @@
             class="cron-input"
             placeholder="e.g., */5 * * * * or 0 9 * * 1-5"
             spellcheck="false"
-            @input="handleManualInput"
           />
           <button
             v-if="cronInput && isValid"
@@ -370,10 +369,7 @@
                 />
               </div>
             </div>
-            <div
-              v-if="builder.month.type === 'specific'"
-              class="month-picker"
-            >
+            <div class="month-picker">
               <button
                 v-for="(month, index) in months"
                 :key="index"
@@ -454,10 +450,7 @@
                 />
               </div>
             </div>
-            <div
-              v-if="builder.dayOfWeek.type === 'specific'"
-              class="day-picker"
-            >
+            <div class="day-picker">
               <button
                 v-for="(day, index) in daysOfWeek"
                 :key="index"
@@ -647,23 +640,60 @@ function updateCronFromBuilder() {
   const month = buildFieldValue("month");
   const dayOfWeek = buildFieldValue("dayOfWeek");
 
+  // Update selected arrays for visual pill feedback
+  updateSelectedArrays();
+
   cronInput.value = `${minute} ${hour} ${dayOfMonth} ${month} ${dayOfWeek}`;
   setTimeout(() => {
     isUpdatingFromBuilder = false;
   }, 0);
 }
 
-// Handle manual input changes and update builder
-function handleManualInput() {
-  if (isUpdatingFromBuilder) return;
-
-  const trimmed = cronInput.value.trim();
-  if (!trimmed) return;
-
-  const parts = trimmed.split(/\s+/);
-  if (parts.length === 5) {
-    parseToBuilder(parts);
+// Update selected arrays based on current builder state for pill visual feedback
+function updateSelectedArrays() {
+  // Update month selected array
+  if (builder.value.month.type === "range") {
+    builder.value.month.selected = [];
+    const start = builder.value.month.rangeStart;
+    const end = builder.value.month.rangeEnd;
+    for (let i = start; i <= end; i++) {
+      builder.value.month.selected.push(i);
+    }
+  } else if (builder.value.month.type === "mixed") {
+    builder.value.month.selected = expandPattern(builder.value.month.mixed, 1, 12);
+  } else if (builder.value.month.type === "interval") {
+    // Show visual feedback for interval patterns like */3
+    const interval = builder.value.month.interval || 1;
+    builder.value.month.selected = [];
+    for (let i = 1; i <= 12; i += interval) {
+      builder.value.month.selected.push(i);
+    }
+  } else if (builder.value.month.type === "every") {
+    builder.value.month.selected = [];
   }
+  // For "specific" type, selected is already managed by toggleMonth
+
+  // Update day of week selected array
+  if (builder.value.dayOfWeek.type === "range") {
+    builder.value.dayOfWeek.selected = [];
+    const start = builder.value.dayOfWeek.rangeStart;
+    const end = builder.value.dayOfWeek.rangeEnd;
+    for (let i = start; i <= end; i++) {
+      builder.value.dayOfWeek.selected.push(i);
+    }
+  } else if (builder.value.dayOfWeek.type === "mixed") {
+    builder.value.dayOfWeek.selected = expandPattern(builder.value.dayOfWeek.mixed, 0, 6);
+  } else if (builder.value.dayOfWeek.type === "interval") {
+    // Show visual feedback for interval patterns like */2
+    const interval = builder.value.dayOfWeek.interval || 1;
+    builder.value.dayOfWeek.selected = [];
+    for (let i = 0; i <= 6; i += interval) {
+      builder.value.dayOfWeek.selected.push(i);
+    }
+  } else if (builder.value.dayOfWeek.type === "every") {
+    builder.value.dayOfWeek.selected = [];
+  }
+  // For "specific" type, selected is already managed by toggleDay
 }
 
 function buildFieldValue(field: string): string {
@@ -702,6 +732,12 @@ function buildFieldValue(field: string): string {
 
 // Toggle day selection
 function toggleDay(dayIndex: number) {
+  // Auto-switch to specific mode when clicking day pills
+  if (builder.value.dayOfWeek.type !== "specific") {
+    builder.value.dayOfWeek.type = "specific";
+    builder.value.dayOfWeek.selected = [];
+  }
+  
   const index = builder.value.dayOfWeek.selected.indexOf(dayIndex);
   if (index > -1) {
     builder.value.dayOfWeek.selected.splice(index, 1);
@@ -713,6 +749,12 @@ function toggleDay(dayIndex: number) {
 
 // Toggle month selection
 function toggleMonth(monthNumber: number) {
+  // Auto-switch to specific mode when clicking month pills
+  if (builder.value.month.type !== "specific") {
+    builder.value.month.type = "specific";
+    builder.value.month.selected = [];
+  }
+  
   const index = builder.value.month.selected.indexOf(monthNumber);
   if (index > -1) {
     builder.value.month.selected.splice(index, 1);
@@ -790,17 +832,30 @@ function parseToBuilder(parts: string[]) {
   } else if (month.startsWith("*/") && !month.includes(",")) {
     // Simple interval like "*/3"
     builder.value.month.type = "interval";
-    builder.value.month.interval = parseInt(month.split("/")[1]);
+    const interval = parseInt(month.split("/")[1]);
+    builder.value.month.interval = interval;
+    // Populate selected for visual feedback (start from 1, step by interval)
+    builder.value.month.selected = [];
+    for (let i = 1; i <= 12; i += interval) {
+      builder.value.month.selected.push(i);
+    }
   } else if (!month.includes(",") && month.includes("-") && !month.includes("/")) {
     // Simple range like "1-6" without commas or steps
     builder.value.month.type = "range";
     const [start, end] = month.split("-");
     builder.value.month.rangeStart = parseInt(start);
     builder.value.month.rangeEnd = parseInt(end);
+    // Populate selected for visual feedback
+    builder.value.month.selected = [];
+    for (let i = parseInt(start); i <= parseInt(end); i++) {
+      builder.value.month.selected.push(i);
+    }
   } else if (month.includes(",") && (month.includes("-") || month.includes("/"))) {
     // Complex mixed pattern like "1-3,5" or "1,3,*/2" - use mixed text input
     builder.value.month.type = "mixed";
     builder.value.month.mixed = month;
+    // Expand pattern for visual feedback
+    builder.value.month.selected = expandPattern(month, 1, 12);
   } else if (month.includes(",")) {
     // Simple list like "1,2,3" - use checkboxes
     builder.value.month.type = "specific";
@@ -817,17 +872,30 @@ function parseToBuilder(parts: string[]) {
   } else if (dayOfWeek.startsWith("*/") && !dayOfWeek.includes(",")) {
     // Simple interval like "*/2"
     builder.value.dayOfWeek.type = "interval";
-    builder.value.dayOfWeek.interval = parseInt(dayOfWeek.split("/")[1]);
+    const interval = parseInt(dayOfWeek.split("/")[1]);
+    builder.value.dayOfWeek.interval = interval;
+    // Populate selected for visual feedback (start from 0, step by interval)
+    builder.value.dayOfWeek.selected = [];
+    for (let i = 0; i <= 6; i += interval) {
+      builder.value.dayOfWeek.selected.push(i);
+    }
   } else if (!dayOfWeek.includes(",") && dayOfWeek.includes("-") && !dayOfWeek.includes("/")) {
     // Simple range like "1-5" without commas or steps
     builder.value.dayOfWeek.type = "range";
     const [start, end] = dayOfWeek.split("-");
     builder.value.dayOfWeek.rangeStart = parseInt(start);
     builder.value.dayOfWeek.rangeEnd = parseInt(end);
+    // Populate selected for visual feedback
+    builder.value.dayOfWeek.selected = [];
+    for (let i = parseInt(start); i <= parseInt(end); i++) {
+      builder.value.dayOfWeek.selected.push(i);
+    }
   } else if (dayOfWeek.includes(",") && (dayOfWeek.includes("-") || dayOfWeek.includes("/"))) {
     // Complex mixed pattern like "1-3,5" or "1-5,0,*/2" - use mixed text input
     builder.value.dayOfWeek.type = "mixed";
     builder.value.dayOfWeek.mixed = dayOfWeek;
+    // Expand pattern for visual feedback
+    builder.value.dayOfWeek.selected = expandPattern(dayOfWeek, 0, 6);
   } else if (dayOfWeek.includes(",")) {
     // Simple list like "1,2,3" - use circular checkboxes
     builder.value.dayOfWeek.type = "specific";
@@ -838,6 +906,62 @@ function parseToBuilder(parts: string[]) {
     builder.value.dayOfWeek.type = "specific";
     builder.value.dayOfWeek.selected = [parseInt(dayOfWeek)];
   }
+}
+
+// Helper function to expand complex patterns into individual values
+function expandPattern(pattern: string, min: number, max: number): number[] {
+  const values: number[] = [];
+  const parts = pattern.split(",");
+  
+  parts.forEach((part) => {
+    part = part.trim();
+    if (part.includes("/")) {
+      // Handle step patterns like "*/3" or "5-10/2"
+      const [rangePart, stepStr] = part.split("/");
+      const step = parseInt(stepStr.trim());
+      
+      if (rangePart === "*") {
+        // For */n, start from min and step by n (standard cron behavior)
+        for (let i = min; i <= max; i += step) {
+          if (!values.includes(i)) {
+            values.push(i);
+          }
+        }
+      } else if (rangePart.includes("-")) {
+        // Range with step like "5-10/2"
+        const [start, end] = rangePart.split("-").map((n) => parseInt(n.trim()));
+        for (let i = start; i <= end; i += step) {
+          if (i >= min && i <= max && !values.includes(i)) {
+            values.push(i);
+          }
+        }
+      } else {
+        // Single value with step like "5/3" - start from that value and step
+        const rangeStart = parseInt(rangePart.trim());
+        for (let i = rangeStart; i <= max; i += step) {
+          if (i >= min && !values.includes(i)) {
+            values.push(i);
+          }
+        }
+      }
+    } else if (part.includes("-")) {
+      // Range like "1-5"
+      const [start, end] = part.split("-").map((n) => parseInt(n.trim()));
+      for (let i = start; i <= end; i++) {
+        if (i >= min && i <= max && !values.includes(i)) {
+          values.push(i);
+        }
+      }
+    } else {
+      // Single value
+      const val = parseInt(part);
+      if (val >= min && val <= max && !values.includes(val)) {
+        values.push(val);
+      }
+    }
+  });
+  
+  return values;
 }
 
 // Initialize builder with default expression
@@ -878,6 +1002,8 @@ watch(cronInput, (newValue) => {
   if (!newValue.trim()) {
     isValid.value = false;
     errorMessage.value = "";
+    builder.value.month.selected = [];
+    builder.value.dayOfWeek.selected = [];
     return;
   }
 
@@ -905,6 +1031,11 @@ watch(cronInput, (newValue) => {
     isValid.value = true;
     errorMessage.value = "";
 
+    // Update builder from parsed expression (for pill visual feedback)
+    if (!isUpdatingFromBuilder) {
+      parseToBuilder(parts);
+    }
+
     // Generate explanation
     explanation.value = generateExplanation(parts);
 
@@ -928,6 +1059,8 @@ watch(cronInput, (newValue) => {
     errorMessage.value = error.message || "Invalid cron expression";
     // Clear URL param on invalid expression
     updateUrlWithCron("");
+    builder.value.month.selected = [];
+    builder.value.dayOfWeek.selected = [];
   }
 }, {immediate: true});
 
