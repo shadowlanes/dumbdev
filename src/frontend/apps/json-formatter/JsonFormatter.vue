@@ -2,7 +2,7 @@
   <div class="formatter-container">
     <div class="formatter-header">
       <h1>JSON Formatter</h1>
-      <p>Format JSON strings for better readability with Monaco Editor. Invalid JSON will be indicated by linting errors.</p>
+      <p>Format JSON strings for better readability. Invalid JSON will be indicated by errors.</p>
     </div>
 
     <div class="formatter-layout">
@@ -17,11 +17,7 @@
           </div>
         </div>
         <div class="panel-body">
-          <div v-if="isLoading" class="loading-container">
-            <div class="loading-spinner"></div>
-            <p>Loading editor...</p>
-          </div>
-          <div v-else ref="inputEditorContainer" class="monaco-editor-container"></div>
+          <div ref="inputEditorContainer" class="monaco-editor-container"></div>
         </div>
       </div>
 
@@ -37,11 +33,7 @@
           </button>
         </div>
         <div class="panel-body">
-          <div v-if="isLoading" class="loading-container">
-            <div class="loading-spinner"></div>
-            <p>Loading editor...</p>
-          </div>
-          <div v-else ref="outputEditorContainer" class="monaco-editor-container"></div>
+          <div ref="outputEditorContainer" class="monaco-editor-container"></div>
         </div>
       </div>
     </div>
@@ -54,10 +46,9 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-
-// Monaco Editor types
-type MonacoEditor = typeof import('monaco-editor')
-type IStandaloneCodeEditor = import('monaco-editor').editor.IStandaloneCodeEditor
+import * as monaco from 'monaco-editor'
+import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 
 // Monaco Environment type declaration
 declare global {
@@ -73,13 +64,11 @@ const formattedJson = ref('')
 const hasErrors = ref(false)
 const errorMessage = ref('')
 const toastMessage = ref('')
-const isLoading = ref(true)
 
 const inputEditorContainer = ref<HTMLElement | null>(null)
 const outputEditorContainer = ref<HTMLElement | null>(null)
-let inputEditor: IStandaloneCodeEditor | null = null
-let outputEditor: IStandaloneCodeEditor | null = null
-let monaco: MonacoEditor | null = null
+let inputEditor: monaco.editor.IStandaloneCodeEditor | null = null
+let outputEditor: monaco.editor.IStandaloneCodeEditor | null = null
 
 const getIndentString = (): string => {
   return '  ' // 2 spaces
@@ -146,53 +135,39 @@ const copyOutput = async () => {
 }
 
 const initializeEditors = async () => {
-  try {
-    isLoading.value = true
-    
-    // Dynamically load Monaco Editor
-    const monacoModule = await import('monaco-editor')
-    monaco = monacoModule
-    
-    await nextTick()
+  await nextTick()
 
-    if (!inputEditorContainer.value || !outputEditorContainer.value) {
-      return
-    }
+  if (!inputEditorContainer.value || !outputEditorContainer.value) {
+    return
+  }
 
-    // Configure Monaco Editor workers for Vite
-    if (!window.MonacoEnvironment) {
-      window.MonacoEnvironment = {
-        getWorker: function (moduleId: string, label: string) {
-          // Dynamically import workers when needed
-          if (label === 'json') {
-            return new Worker(
-              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url),
-              { type: 'module' }
-            )
-          }
-          return new Worker(
-            new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
-            { type: 'module' }
-          )
+  // Configure Monaco Editor workers for Vite
+  if (!window.MonacoEnvironment) {
+    window.MonacoEnvironment = {
+      getWorker: function (moduleId: string, label: string) {
+        if (label === 'json') {
+          return new jsonWorker()
         }
+        return new editorWorker()
       }
     }
+  }
 
-    // Configure Monaco Editor theme to match VitePress
-    const isDark = document.documentElement.classList.contains('dark') || 
-                   window.matchMedia('(prefers-color-scheme: dark)').matches
+  // Configure Monaco Editor theme to match VitePress
+  const isDark = document.documentElement.classList.contains('dark') || 
+                 window.matchMedia('(prefers-color-scheme: dark)').matches
 
-    monaco.editor.defineTheme('vitepress-theme', {
-      base: isDark ? 'vs-dark' : 'vs',
-      inherit: true,
-      rules: [],
-      colors: {
-        'editor.background': isDark ? '#1e1e1e' : '#ffffff',
-        'editor.foreground': isDark ? '#d4d4d4' : '#333333',
-      }
-    })
+  monaco.editor.defineTheme('vitepress-theme', {
+    base: isDark ? 'vs-dark' : 'vs',
+    inherit: true,
+    rules: [],
+    colors: {
+      'editor.background': isDark ? '#1e1e1e' : '#ffffff',
+      'editor.foreground': isDark ? '#d4d4d4' : '#333333',
+    }
+  })
 
-    monaco.editor.setTheme('vitepress-theme')
+  monaco.editor.setTheme('vitepress-theme')
 
   // Input editor configuration
   inputEditor = monaco.editor.create(inputEditorContainer.value, {
@@ -211,14 +186,11 @@ const initializeEditors = async () => {
     insertSpaces: true,
     detectIndentation: false,
     formatOnPaste: true,
+    formatOnType: false,
     suggestOnTriggerCharacters: false,
-    quickSuggestions: {
-      other: false,
-      comments: false,
-      strings: false
-    },
+    quickSuggestions: false,
     parameterHints: { enabled: false },
-    occurrencesHighlight: 'off',
+    occurrencesHighlight: false,
     selectionHighlight: false,
     renderWhitespace: 'selection',
     fontSize: 14,
@@ -255,35 +227,20 @@ const initializeEditors = async () => {
     inputJson.value = value
   })
 
-    // Configure JSON language features
-    if (monaco.languages.json && 'jsonDefaults' in monaco.languages.json) {
-      const jsonDefaults = (monaco.languages.json as any).jsonDefaults
-      if (jsonDefaults && typeof jsonDefaults.setDiagnosticsOptions === 'function') {
-        jsonDefaults.setDiagnosticsOptions({
-          validate: true,
-          allowComments: false,
-          schemas: [],
-          enableSchemaRequest: false
-        })
-      }
-    }
+  // Configure JSON language features
+  monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+    validate: true,
+    allowComments: false,
+    schemas: [],
+    enableSchemaRequest: false
+  })
 
-    // Update theme when system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const handleThemeChange = (e: MediaQueryListEvent) => {
-      monaco?.editor.setTheme(e.matches ? 'vs-dark' : 'vs')
-    }
-    mediaQuery.addEventListener('change', handleThemeChange)
-    
-    isLoading.value = false
-  } catch (error) {
-    console.error('Failed to load Monaco Editor:', error)
-    isLoading.value = false
-    toastMessage.value = 'Failed to load editor. Please refresh the page.'
-    setTimeout(() => {
-      toastMessage.value = ''
-    }, 5000)
+  // Update theme when system theme changes
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  const handleThemeChange = (e: MediaQueryListEvent) => {
+    monaco.editor.setTheme(e.matches ? 'vs-dark' : 'vs')
   }
+  mediaQuery.addEventListener('change', handleThemeChange)
 }
 
 onMounted(() => {
@@ -477,36 +434,5 @@ onBeforeUnmount(() => {
 .toast-enter-from,
 .toast-leave-to {
   opacity: 0;
-}
-
-.loading-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  color: var(--vp-c-text-2);
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--vp-c-divider);
-  border-top-color: var(--vp-c-brand-1);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 1rem;
-}
-
-.loading-container p {
-  margin: 0;
-  font-size: 0.875rem;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

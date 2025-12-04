@@ -9,15 +9,13 @@ export default defineConfig({
   
   vite: {
     optimizeDeps: {
-      exclude: ['monaco-editor']
+      include: ['monaco-editor']
     },
     build: {
       rollupOptions: {
         output: {
-          manualChunks: (id) => {
-            if (id.includes('monaco-editor')) {
-              return 'monaco-editor'
-            }
+          manualChunks: {
+            'monaco-editor': ['monaco-editor']
           }
         }
       }
