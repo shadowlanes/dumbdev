@@ -173,7 +173,8 @@ gtag('config', 'G-WB6CLSQ1DG');`]
       '/json-formatter/': getAppsDirectorySidebar(),
       '/cron-validator/': getAppsDirectorySidebar(),
       '/epoch-converter/': getAppsDirectorySidebar(),
-      '/encoder-decoder/': getAppsDirectorySidebar()
+      '/encoder-decoder/': getAppsDirectorySidebar(),
+      '/number-base-converter/': getAppsDirectorySidebar()
     },
 
     socialLinks: [

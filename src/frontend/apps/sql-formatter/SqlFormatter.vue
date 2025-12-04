@@ -235,12 +235,14 @@ function showToast(message: string) {
 
 .dialect-pill.active {
   border-color: var(--vp-c-brand-1);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-1) 20%, var(--vp-c-bg-soft)), color-mix(in srgb, var(--vp-c-bg-soft) 70%, transparent));
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16), inset 0 0 0 1px color-mix(in srgb, var(--vp-c-brand-1) 25%, transparent);
+  background: color-mix(in srgb, var(--vp-c-brand-1) 15%, var(--vp-c-bg-soft));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent);
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
 }
 
 .dialect-pill.active::after {
-  opacity: 1;
+  opacity: 0;
 }
 
 .dialect-pill:focus-visible {

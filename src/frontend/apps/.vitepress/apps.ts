@@ -122,6 +122,16 @@ export const apps: App[] = [
     category: 'development-utils',
     status: 'active',
     hasInternalNav: false
+  },
+  {
+    id: 'number-base-converter',
+    name: 'Number Base Converter',
+    icon: '🔢',
+    description: 'Convert numbers between Binary, Octal, Decimal, and Hexadecimal formats with real-time validation',
+    link: '/number-base-converter/',
+    category: 'development-utils',
+    status: 'active',
+    hasInternalNav: false
   }
 ]
 

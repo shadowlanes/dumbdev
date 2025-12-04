@@ -32,6 +32,7 @@ head:
           <a role="menuitem" href="/cron-validator/">Cron Validator</a>
           <a role="menuitem" href="/epoch-converter/">Epoch Time Converter</a>
           <a role="menuitem" href="/encoder-decoder/">Encoder / Decoder</a>
+          <a role="menuitem" href="/number-base-converter/">Number Base Converter</a>
         </div>
       </div>
       <div class="menu-dropdown">
@@ -93,6 +94,10 @@ head:
         <span class="icon-emoji" aria-hidden="true">🔐</span>
         <span class="icon-label">Encoder / Decoder</span>
       </a>
+      <a class="desktop-icon" href="/number-base-converter/">
+        <span class="icon-emoji" aria-hidden="true">🔢</span>
+        <span class="icon-label">Base Converter</span>
+      </a>
     </div>
   </div>
 
@@ -133,6 +138,10 @@ head:
       <a class="dock-icon" href="/encoder-decoder/">
         <span aria-hidden="true">🔐</span>
         <span>Encoder</span>
+      </a>
+      <a class="dock-icon" href="/number-base-converter/">
+        <span aria-hidden="true">🔢</span>
+        <span>Base Conv</span>
       </a>
     </div>
   </div>
