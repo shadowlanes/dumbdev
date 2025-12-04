@@ -46,9 +46,6 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import * as monaco from 'monaco-editor'
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 
 // Monaco Environment type declaration
 declare global {
@@ -67,8 +64,9 @@ const toastMessage = ref('')
 
 const inputEditorContainer = ref<HTMLElement | null>(null)
 const outputEditorContainer = ref<HTMLElement | null>(null)
-let inputEditor: monaco.editor.IStandaloneCodeEditor | null = null
-let outputEditor: monaco.editor.IStandaloneCodeEditor | null = null
+let inputEditor: any = null
+let outputEditor: any = null
+let monaco: any = null
 
 const getIndentString = (): string => {
   return '  ' // 2 spaces
@@ -135,22 +133,45 @@ const copyOutput = async () => {
 }
 
 const initializeEditors = async () => {
+  if (typeof window === 'undefined') return
+  
   await nextTick()
-
+  
   if (!inputEditorContainer.value || !outputEditorContainer.value) {
     return
   }
 
-  // Configure Monaco Editor workers for Vite
-  if (!window.MonacoEnvironment) {
-    window.MonacoEnvironment = {
-      getWorker: function (moduleId: string, label: string) {
-        if (label === 'json') {
-          return new jsonWorker()
+  // Dynamically import Monaco Editor (client-side only)
+  try {
+    const monacoModule = await import('monaco-editor')
+    monaco = monacoModule
+    
+    // @ts-ignore - Worker imports are handled by Vite
+    const editorWorkerModule = await import('monaco-editor/esm/vs/editor/editor.worker?worker')
+    // @ts-ignore - Worker imports are handled by Vite
+    const jsonWorkerModule = await import('monaco-editor/esm/vs/language/json/json.worker?worker')
+    
+    const EditorWorker = editorWorkerModule.default
+    const JsonWorker = jsonWorkerModule.default
+
+    // Configure Monaco Editor workers for Vite
+    if (!window.MonacoEnvironment) {
+      window.MonacoEnvironment = {
+        getWorker: function (moduleId: string, label: string) {
+          if (label === 'json') {
+            return new JsonWorker()
+          }
+          return new EditorWorker()
         }
-        return new editorWorker()
       }
     }
+  } catch (error) {
+    console.error('Failed to load Monaco Editor:', error)
+    return
+  }
+  
+  if (!monaco) {
+    return
   }
 
   // Configure Monaco Editor theme to match VitePress

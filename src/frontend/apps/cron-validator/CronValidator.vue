@@ -969,6 +969,8 @@ updateCronFromBuilder();
 
 // Read cron expression from URL query params on mount
 onMounted(() => {
+  if (typeof window === 'undefined') return;
+  
   const urlParams = new URLSearchParams(window.location.search);
   const cronFromUrl = urlParams.get("cron");
   
@@ -984,6 +986,8 @@ onMounted(() => {
 
 // Update URL when cron expression changes
 function updateUrlWithCron(cron: string) {
+  if (typeof window === 'undefined') return;
+  
   if (!cron || !isValid.value) {
     // Remove query param if invalid or empty
     const url = new URL(window.location.href);
@@ -1078,7 +1082,7 @@ function copyExpression() {
 }
 
 function shareExpression() {
-  if (!cronInput.value || !isValid.value) return;
+  if (!cronInput.value || !isValid.value || typeof window === 'undefined') return;
 
   // Copy the full URL with the cron expression as query param
   const url = new URL(window.location.href);

@@ -11,11 +11,22 @@ export default defineConfig({
     optimizeDeps: {
       include: ['monaco-editor']
     },
+    resolve: {
+      dedupe: ['monaco-editor']
+    },
+    ssr: {
+      noExternal: []
+    },
     build: {
+      commonjsOptions: {
+        include: [/monaco-editor/, /node_modules/]
+      },
       rollupOptions: {
         output: {
-          manualChunks: {
-            'monaco-editor': ['monaco-editor']
+          manualChunks: (id) => {
+            if (id.includes('monaco-editor')) {
+              return 'monaco-editor'
+            }
           }
         }
       }
