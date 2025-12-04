@@ -2,7 +2,7 @@
   <div class="formatter-container">
     <div class="formatter-header">
       <h1>JSON Formatter</h1>
-      <p>Format JSON strings for better readability. Invalid JSON will be indicated by a red dot.</p>
+      <p>Format JSON strings for better readability with Monaco Editor. Invalid JSON will be indicated by linting errors.</p>
     </div>
 
     <div class="formatter-layout">
@@ -10,20 +10,18 @@
         <div class="panel-header">
           <h3>Input JSON</h3>
           <div class="header-controls">
-            <span v-if="!isJsonValid" class="error-indicator" title="Invalid JSON"></span>
+            <span v-if="hasErrors" class="error-indicator" :title="errorMessage"></span>
             <button class="btn-secondary" @click="clearInput" :disabled="!inputJson.trim()">
               Clear
             </button>
           </div>
         </div>
         <div class="panel-body">
-          <textarea
-            v-model="inputJson"
-            class="json-input"
-            placeholder="Paste or type your JSON here..."
-            spellcheck="false"
-            @input="formatJson"
-          ></textarea>
+          <div v-if="isLoading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading editor...</p>
+          </div>
+          <div v-else ref="inputEditorContainer" class="monaco-editor-container"></div>
         </div>
       </div>
 
@@ -39,10 +37,11 @@
           </button>
         </div>
         <div class="panel-body">
-          <pre class="json-output" v-if="formattedJson">{{ formattedJson }}</pre>
-          <div v-else class="empty-output">
-            <p>Formatted JSON will appear here...</p>
+          <div v-if="isLoading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading editor...</p>
           </div>
+          <div v-else ref="outputEditorContainer" class="monaco-editor-container"></div>
         </div>
       </div>
     </div>
@@ -54,27 +53,65 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+
+// Monaco Editor types
+type MonacoEditor = typeof import('monaco-editor')
+type IStandaloneCodeEditor = import('monaco-editor').editor.IStandaloneCodeEditor
+
+// Monaco Environment type declaration
+declare global {
+  interface Window {
+    MonacoEnvironment?: {
+      getWorker: (moduleId: string, label: string) => Worker
+    }
+  }
+}
 
 const inputJson = ref('')
 const formattedJson = ref('')
-const isJsonValid = ref(true)
+const hasErrors = ref(false)
+const errorMessage = ref('')
 const toastMessage = ref('')
+const isLoading = ref(true)
+
+const inputEditorContainer = ref<HTMLElement | null>(null)
+const outputEditorContainer = ref<HTMLElement | null>(null)
+let inputEditor: IStandaloneCodeEditor | null = null
+let outputEditor: IStandaloneCodeEditor | null = null
+let monaco: MonacoEditor | null = null
+
+const getIndentString = (): string => {
+  return '  ' // 2 spaces
+}
 
 const formatJson = () => {
-  if (!inputJson.value.trim()) {
+  const content = inputJson.value.trim()
+  
+  if (!content) {
     formattedJson.value = ''
-    isJsonValid.value = true
+    hasErrors.value = false
+    errorMessage.value = ''
+    if (outputEditor) {
+      outputEditor.setValue('')
+    }
     return
   }
 
   try {
-    const parsed = JSON.parse(inputJson.value)
-    formattedJson.value = JSON.stringify(parsed, null, 2)
-    isJsonValid.value = true
+    const parsed = JSON.parse(content)
+    const indentStr = getIndentString()
+    formattedJson.value = JSON.stringify(parsed, null, indentStr)
+    hasErrors.value = false
+    errorMessage.value = ''
+    
+    if (outputEditor) {
+      outputEditor.setValue(formattedJson.value)
+    }
   } catch (error) {
-    isJsonValid.value = false
-    // Do not clear formatted output on invalid JSON
+    hasErrors.value = true
+    errorMessage.value = error instanceof Error ? error.message : 'Invalid JSON'
+    // Keep the last valid formatted output
   }
 }
 
@@ -83,7 +120,14 @@ watch(inputJson, formatJson, { immediate: true })
 const clearInput = () => {
   inputJson.value = ''
   formattedJson.value = ''
-  isJsonValid.value = true
+  hasErrors.value = false
+  errorMessage.value = ''
+  if (inputEditor) {
+    inputEditor.setValue('')
+  }
+  if (outputEditor) {
+    outputEditor.setValue('')
+  }
 }
 
 const copyOutput = async () => {
@@ -100,6 +144,160 @@ const copyOutput = async () => {
     }, 2000)
   }
 }
+
+const initializeEditors = async () => {
+  try {
+    isLoading.value = true
+    
+    // Dynamically load Monaco Editor
+    const monacoModule = await import('monaco-editor')
+    monaco = monacoModule
+    
+    await nextTick()
+
+    if (!inputEditorContainer.value || !outputEditorContainer.value) {
+      return
+    }
+
+    // Configure Monaco Editor workers for Vite
+    if (!window.MonacoEnvironment) {
+      window.MonacoEnvironment = {
+        getWorker: function (moduleId: string, label: string) {
+          // Dynamically import workers when needed
+          if (label === 'json') {
+            return new Worker(
+              new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url),
+              { type: 'module' }
+            )
+          }
+          return new Worker(
+            new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
+            { type: 'module' }
+          )
+        }
+      }
+    }
+
+    // Configure Monaco Editor theme to match VitePress
+    const isDark = document.documentElement.classList.contains('dark') || 
+                   window.matchMedia('(prefers-color-scheme: dark)').matches
+
+    monaco.editor.defineTheme('vitepress-theme', {
+      base: isDark ? 'vs-dark' : 'vs',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': isDark ? '#1e1e1e' : '#ffffff',
+        'editor.foreground': isDark ? '#d4d4d4' : '#333333',
+      }
+    })
+
+    monaco.editor.setTheme('vitepress-theme')
+
+  // Input editor configuration
+  inputEditor = monaco.editor.create(inputEditorContainer.value, {
+    value: inputJson.value,
+    language: 'json',
+    theme: 'vitepress-theme',
+    automaticLayout: true,
+    minimap: { enabled: false },
+    scrollBeyondLastLine: false,
+    wordWrap: 'on',
+    lineNumbers: 'on',
+    folding: true,
+    foldingStrategy: 'indentation',
+    showFoldingControls: 'always',
+    tabSize: 2,
+    insertSpaces: true,
+    detectIndentation: false,
+    formatOnPaste: true,
+    suggestOnTriggerCharacters: false,
+    quickSuggestions: {
+      other: false,
+      comments: false,
+      strings: false
+    },
+    parameterHints: { enabled: false },
+    occurrencesHighlight: 'off',
+    selectionHighlight: false,
+    renderWhitespace: 'selection',
+    fontSize: 14,
+    lineHeight: 22,
+    padding: { top: 12, bottom: 12 }
+  })
+
+  // Output editor configuration (read-only)
+  outputEditor = monaco.editor.create(outputEditorContainer.value, {
+    value: formattedJson.value,
+    language: 'json',
+    theme: 'vitepress-theme',
+    automaticLayout: true,
+    minimap: { enabled: false },
+    scrollBeyondLastLine: false,
+    wordWrap: 'on',
+    lineNumbers: 'on',
+    folding: true,
+    foldingStrategy: 'indentation',
+    showFoldingControls: 'always',
+    readOnly: true,
+    tabSize: 2,
+    insertSpaces: true,
+    detectIndentation: false,
+    renderWhitespace: 'selection',
+    fontSize: 14,
+    lineHeight: 22,
+    padding: { top: 12, bottom: 12 }
+  })
+
+  // Listen to input editor changes
+  inputEditor.onDidChangeModelContent(() => {
+    const value = inputEditor?.getValue() || ''
+    inputJson.value = value
+  })
+
+    // Configure JSON language features
+    if (monaco.languages.json && 'jsonDefaults' in monaco.languages.json) {
+      const jsonDefaults = (monaco.languages.json as any).jsonDefaults
+      if (jsonDefaults && typeof jsonDefaults.setDiagnosticsOptions === 'function') {
+        jsonDefaults.setDiagnosticsOptions({
+          validate: true,
+          allowComments: false,
+          schemas: [],
+          enableSchemaRequest: false
+        })
+      }
+    }
+
+    // Update theme when system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleThemeChange = (e: MediaQueryListEvent) => {
+      monaco?.editor.setTheme(e.matches ? 'vs-dark' : 'vs')
+    }
+    mediaQuery.addEventListener('change', handleThemeChange)
+    
+    isLoading.value = false
+  } catch (error) {
+    console.error('Failed to load Monaco Editor:', error)
+    isLoading.value = false
+    toastMessage.value = 'Failed to load editor. Please refresh the page.'
+    setTimeout(() => {
+      toastMessage.value = ''
+    }, 5000)
+  }
+}
+
+onMounted(() => {
+  initializeEditors()
+})
+
+onBeforeUnmount(() => {
+  if (inputEditor) {
+    inputEditor.dispose()
+  }
+  if (outputEditor) {
+    outputEditor.dispose()
+  }
+})
 </script>
 
 <style scoped>
@@ -113,7 +311,7 @@ const copyOutput = async () => {
 
 .formatter-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .formatter-header h1 {
@@ -191,54 +389,16 @@ const copyOutput = async () => {
 .panel-body {
   flex: 1;
   display: flex;
+  min-height: 0;
 }
 
-.json-input,
-.json-output,
-.empty-output {
+.monaco-editor-container {
   flex: 1;
-  padding: 1rem 1.25rem;
   border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
-  background: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-1);
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.9rem;
-  line-height: 1.6;
+  overflow: hidden;
   box-shadow: var(--vp-shadow-1);
-}
-
-.json-input {
-  width: 100%;
-  resize: vertical;
   min-height: 100%;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.json-input:focus {
-  border-color: var(--vp-c-brand-1);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent);
-}
-
-.json-output {
-  margin: 0;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.empty-output {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--vp-c-bg-alt);
-}
-
-.empty-output p {
-  margin: 0;
-  color: var(--vp-c-text-2);
-  font-style: italic;
 }
 
 .panel-header button {
@@ -297,6 +457,7 @@ const copyOutput = async () => {
   padding: 1rem;
   box-shadow: var(--vp-shadow-2);
   animation: slideIn 0.3s ease;
+  z-index: 1000;
 }
 
 @keyframes slideIn {
@@ -316,5 +477,36 @@ const copyOutput = async () => {
 .toast-enter-from,
 .toast-leave-to {
   opacity: 0;
+}
+
+.loading-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: var(--vp-c-text-2);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--vp-c-divider);
+  border-top-color: var(--vp-c-brand-1);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-container p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

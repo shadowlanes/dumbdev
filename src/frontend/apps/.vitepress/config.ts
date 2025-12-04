@@ -7,6 +7,23 @@ export default defineConfig({
   description: "A collection of independent micro apps for web developers",
   lang: 'en-US',
   
+  vite: {
+    optimizeDeps: {
+      exclude: ['monaco-editor']
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            if (id.includes('monaco-editor')) {
+              return 'monaco-editor'
+            }
+          }
+        }
+      }
+    }
+  },
+  
   sitemap: {
     hostname: 'https://dumbdev.me'
   },
